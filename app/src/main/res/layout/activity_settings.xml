@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_settings"
-    android:padding="4dp"
+    android:padding="@dimen/padding"
     android:orientation="vertical">
 
     <LinearLayout
@@ -22,7 +22,7 @@
         android:background="@android:color/transparent"
         app:tint="@color/text" />
     <TextView
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/ic_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/options"
@@ -37,18 +37,18 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="@dimen/zero_size"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/is_dark_theme"
             android:textColor="@color/text"
             android:textSize="@dimen/small_text_size"
             android:layout_marginStart="@dimen/small_margin"
-            android:layout_marginTop="45dp"/>
+            android:layout_marginTop="@dimen/settigs_margin"/>
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="45dp"/>
+            android:layout_marginTop="@dimen/settigs_margin"/>
 
     </LinearLayout>
 
@@ -58,19 +58,19 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="@dimen/zero_size"
             android:layout_height="wrap_content"
             android:layout_weight="7"
             android:text="@string/share"
             android:textColor="@color/text"
             android:textSize="@dimen/small_text_size"
             android:layout_marginStart="@dimen/small_margin"
-            android:layout_marginTop="21dp"/>
+            android:layout_marginTop="@dimen/margin_text_size"/>
       <ImageButton
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
+          android:layout_width="@dimen/zero_size"
+          android:layout_height="@dimen/imgbtn_size"
           android:layout_weight="1"
-          android:layout_marginTop="22dp"
+          android:layout_marginTop="@dimen/margin_butt_size"
           android:src="@drawable/share_ic"
           android:background="@android:color/transparent"
           app:tint="@color/YP_text_gray" />
@@ -83,19 +83,19 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="@dimen/zero_size"
             android:layout_height="wrap_content"
             android:layout_weight="7"
             android:text="@string/message_sup"
             android:textColor="@color/text"
             android:textSize="@dimen/small_text_size"
             android:layout_marginStart="@dimen/small_margin"
-            android:layout_marginTop="21dp"/>
+            android:layout_marginTop="@dimen/margin_text_size"/>
         <ImageButton
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/zero_size"
+            android:layout_height="@dimen/imgbtn_size"
             android:layout_weight="1"
-            android:layout_marginTop="22dp"
+            android:layout_marginTop="@dimen/margin_butt_size"
             android:src="@drawable/support_ic"
             android:background="@android:color/transparent"
             app:tint="@color/YP_text_gray" />
@@ -105,22 +105,23 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_gravity="center">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="@dimen/zero_size"
             android:layout_height="wrap_content"
             android:layout_weight="7"
             android:text="@string/agreement"
             android:textColor="@color/text"
             android:textSize="@dimen/small_text_size"
             android:layout_marginStart="@dimen/small_margin"
-            android:layout_marginTop="21dp"/>
+            android:layout_marginTop="@dimen/margin_text_size"/>
         <ImageButton
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/zero_size"
+            android:layout_height="@dimen/imgbtn_size"
             android:layout_weight="1"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="@dimen/margin_butt_size"
             android:src="@drawable/agreement_ic"
             android:background="@android:color/transparent"
             app:tint="@color/YP_text_gray" />

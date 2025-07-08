@@ -5,4 +5,11 @@
     <dimen name="default_margin">16dp</dimen>
     <dimen name="small_margin">14dp</dimen>
     <dimen name="ic_text">10dp</dimen>
+    <dimen name="imgbtn_size">24dp</dimen>
+    <dimen name="margin_text_size">21dp</dimen>
+    <dimen name="margin_butt_size">19dp</dimen>
+    <dimen name="idk_12_size">12dp</dimen>
+    <dimen name="zero_size">0dp</dimen>
+    <dimen name="settigs_margin">45dp</dimen>
+    <dimen name="padding">4dp</dimen>
 </resources>
