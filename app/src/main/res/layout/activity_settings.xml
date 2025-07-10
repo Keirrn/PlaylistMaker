@@ -5,126 +5,108 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_settings"
-    android:padding="@dimen/padding"
+    android:paddingHorizontal="@dimen/small_margin"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_marginTop="@dimen/padding">
     <ImageButton
+        android:layout_width="@dimen/big_btn"
+        android:layout_height="@dimen/big_btn"
         android:id="@+id/backButton"
-        android:layout_margin="@dimen/default_margin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/back_ic"
         android:background="@android:color/transparent"
-        app:tint="@color/text" />
+        android:src="@drawable/back_ic"
+        app:tint="@color/text"
+        android:layout_marginStart="@dimen/padding" />
     <TextView
-        android:layout_marginTop="@dimen/ic_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/small_margin"
         android:text="@string/options"
         android:textColor="@color/text"
-        android:textSize="@dimen/primary_text_size"/>
+        android:textSize="@dimen/primary_text_size" />
+</LinearLayout>
 
-    </LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/bigbigbig"
+    android:layout_marginTop="@dimen/imgbtn_size"
+    android:gravity="center_vertical"
+    android:layout_marginStart="@dimen/padding">
+<TextView
+    android:layout_width="@dimen/zero_size"
+    android:layout_weight="1"
+    android:layout_height="wrap_content"
+    android:text="@string/is_dark_theme"
+    android:textColor="@color/text"
+    android:textSize="@dimen/small_text_size"
+    />
+<Switch
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"/>
+</LinearLayout>
 
-    <LinearLayout
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/bigbigbig"
+    android:layout_marginStart="@dimen/padding"
+    android:gravity="center_vertical">
+<TextView
+    android:layout_width="@dimen/zero_size"
+    android:layout_weight="1"
+    android:layout_height="wrap_content"
+    android:text="@string/share"
+    android:textColor="@color/text"
+    android:textSize="@dimen/small_text_size"/>
+    <ImageButton
+        android:layout_width="@dimen/imgbtn_size"
+        android:layout_height="@dimen/imgbtn_size"
+        android:src="@drawable/share_ic"
+        android:background="@android:color/transparent"
+        app:tint="@color/image_col" />
+</LinearLayout>
+
+<LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
+        android:layout_height="@dimen/bigbigbig"
+        android:layout_marginStart="@dimen/padding"
+        android:gravity="center_vertical">
         <TextView
             android:layout_width="@dimen/zero_size"
-            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/is_dark_theme"
-            android:textColor="@color/text"
-            android:textSize="@dimen/small_text_size"
-            android:layout_marginStart="@dimen/small_margin"
-            android:layout_marginTop="@dimen/settigs_margin"/>
-        <Switch
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/settigs_margin"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="@dimen/zero_size"
-            android:layout_height="wrap_content"
-            android:layout_weight="7"
-            android:text="@string/share"
-            android:textColor="@color/text"
-            android:textSize="@dimen/small_text_size"
-            android:layout_marginStart="@dimen/small_margin"
-            android:layout_marginTop="@dimen/margin_text_size"/>
-      <ImageButton
-          android:layout_width="@dimen/zero_size"
-          android:layout_height="@dimen/imgbtn_size"
-          android:layout_weight="1"
-          android:layout_marginTop="@dimen/margin_butt_size"
-          android:src="@drawable/share_ic"
-          android:background="@android:color/transparent"
-          app:tint="@color/YP_text_gray" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="@dimen/zero_size"
-            android:layout_height="wrap_content"
-            android:layout_weight="7"
             android:text="@string/message_sup"
             android:textColor="@color/text"
-            android:textSize="@dimen/small_text_size"
-            android:layout_marginStart="@dimen/small_margin"
-            android:layout_marginTop="@dimen/margin_text_size"/>
+            android:textSize="@dimen/small_text_size"/>
         <ImageButton
-            android:layout_width="@dimen/zero_size"
+            android:layout_width="@dimen/imgbtn_size"
             android:layout_height="@dimen/imgbtn_size"
-            android:layout_weight="1"
-            android:layout_marginTop="@dimen/margin_butt_size"
             android:src="@drawable/support_ic"
             android:background="@android:color/transparent"
-            app:tint="@color/YP_text_gray" />
+            app:tint="@color/image_col" />
+</LinearLayout>
 
-    </LinearLayout>
-
-    <LinearLayout
+<LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
-
+        android:layout_height="@dimen/bigbigbig"
+        android:layout_marginStart="@dimen/padding"
+        android:gravity="center_vertical">
         <TextView
             android:layout_width="@dimen/zero_size"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:layout_weight="7"
             android:text="@string/agreement"
             android:textColor="@color/text"
-            android:textSize="@dimen/small_text_size"
-            android:layout_marginStart="@dimen/small_margin"
-            android:layout_marginTop="@dimen/margin_text_size"/>
+            android:textSize="@dimen/small_text_size"/>
         <ImageButton
-            android:layout_width="@dimen/zero_size"
+            android:layout_width="@dimen/imgbtn_size"
             android:layout_height="@dimen/imgbtn_size"
-            android:layout_weight="1"
-            android:layout_marginTop="@dimen/margin_butt_size"
             android:src="@drawable/agreement_ic"
             android:background="@android:color/transparent"
-            app:tint="@color/YP_text_gray" />
-
-    </LinearLayout>
+            app:tint="@color/image_col" />
+</LinearLayout>
 </LinearLayout>
