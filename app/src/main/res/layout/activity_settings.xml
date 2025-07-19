@@ -2,111 +2,86 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background_settings"
-    android:paddingHorizontal="@dimen/small_margin"
-    android:orientation="vertical">
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@color/backgrounds"
+android:paddingHorizontal="@dimen/margin_small"
+android:orientation="vertical">
 
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:layout_marginTop="@dimen/padding">
+    android:layout_marginTop="@dimen/padding_small">
     <ImageButton
-        android:layout_width="@dimen/big_btn"
-        android:layout_height="@dimen/big_btn"
         android:id="@+id/backButton"
+        android:layout_width="@dimen/btn_large"
+        android:layout_height="@dimen/btn_large"
         android:background="@android:color/transparent"
         android:src="@drawable/back_ic"
         app:tint="@color/text"
-        android:layout_marginStart="@dimen/padding" />
+        android:layout_marginStart="@dimen/padding_small" />
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/small_margin"
-        android:text="@string/options"
-        android:textColor="@color/text"
-        android:textSize="@dimen/primary_text_size" />
+        style="@style/HeaderText"
+        android:layout_marginStart="@dimen/margin_small"
+        android:text="@string/options" />
 </LinearLayout>
 
 <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="@dimen/bigbigbig"
-    android:layout_marginTop="@dimen/imgbtn_size"
-    android:gravity="center_vertical"
-    android:layout_marginStart="@dimen/padding">
-<TextView
-    android:layout_width="@dimen/zero_size"
-    android:layout_weight="1"
-    android:layout_height="wrap_content"
-    android:text="@string/is_dark_theme"
-    android:textColor="@color/text"
-    android:textSize="@dimen/small_text_size"
-    />
-<Switch
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"/>
-</LinearLayout>
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/bigbigbig"
-    android:layout_marginStart="@dimen/padding"
+    android:layout_height="@dimen/btn_height"
+    android:layout_marginTop="@dimen/btn_medium"
+    android:layout_marginStart="@dimen/padding_small"
     android:gravity="center_vertical">
-<TextView
-    android:layout_width="@dimen/zero_size"
-    android:layout_weight="1"
-    android:layout_height="wrap_content"
-    android:text="@string/share"
-    android:textColor="@color/text"
-    android:textSize="@dimen/small_text_size"/>
+    <TextView
+        style="@style/OptionText"
+        android:text="@string/is_dark_theme"/>
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</LinearLayout>
+
+<!-- Повторяющиеся блоки -->
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/btn_height"
+    android:layout_marginStart="@dimen/padding_small"
+    android:gravity="center_vertical">
+    <TextView
+        style="@style/OptionText"
+        android:text="@string/share"/>
     <ImageButton
-        android:layout_width="@dimen/imgbtn_size"
-        android:layout_height="@dimen/imgbtn_size"
-        android:src="@drawable/share_ic"
-        android:background="@android:color/transparent"
-        app:tint="@color/image_col" />
+        android:id="@+id/shareButton"
+        style="@style/OptionIconButton"
+        android:src="@drawable/share_ic"/>
 </LinearLayout>
 
 <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/bigbigbig"
-        android:layout_marginStart="@dimen/padding"
-        android:gravity="center_vertical">
-        <TextView
-            android:layout_width="@dimen/zero_size"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="@string/message_sup"
-            android:textColor="@color/text"
-            android:textSize="@dimen/small_text_size"/>
-        <ImageButton
-            android:layout_width="@dimen/imgbtn_size"
-            android:layout_height="@dimen/imgbtn_size"
-            android:src="@drawable/support_ic"
-            android:background="@android:color/transparent"
-            app:tint="@color/image_col" />
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/btn_height"
+    android:layout_marginStart="@dimen/padding_small"
+    android:gravity="center_vertical">
+    <TextView
+        style="@style/OptionText"
+        android:text="@string/message_sup"/>
+    <ImageButton
+        android:id="@+id/supportButton"
+        style="@style/OptionIconButton"
+        android:src="@drawable/support_ic"/>
 </LinearLayout>
 
 <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/bigbigbig"
-        android:layout_marginStart="@dimen/padding"
-        android:gravity="center_vertical">
-        <TextView
-            android:layout_width="@dimen/zero_size"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="@string/agreement"
-            android:textColor="@color/text"
-            android:textSize="@dimen/small_text_size"/>
-        <ImageButton
-            android:layout_width="@dimen/imgbtn_size"
-            android:layout_height="@dimen/imgbtn_size"
-            android:src="@drawable/agreement_ic"
-            android:background="@android:color/transparent"
-            app:tint="@color/image_col" />
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/btn_height"
+    android:layout_marginStart="@dimen/padding_small"
+    android:gravity="center_vertical">
+    <TextView
+        style="@style/OptionText"
+        android:text="@string/agreement"/>
+    <ImageButton
+        android:id="@+id/agreementButton"
+        style="@style/OptionIconButton"
+        android:src="@drawable/agreement_ic"/>
 </LinearLayout>
 </LinearLayout>

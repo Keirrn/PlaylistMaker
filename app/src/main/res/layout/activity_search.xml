@@ -1,10 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchActivity">
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/margin_small"
+    tools:context=".SearchActivity"
+    android:background="@color/backgrounds">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="@dimen/padding_small">
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="@dimen/btn_large"
+            android:layout_height="@dimen/btn_large"
+            android:background="@android:color/transparent"
+            android:src="@drawable/back_ic"
+            app:tint="@color/text"
+            android:layout_marginStart="@dimen/padding_small" />
+        <TextView
+            style="@style/HeaderText"
+            android:layout_marginStart="@dimen/margin_small"
+            android:text="@string/search" />
+    </LinearLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="@dimen/padding_small"
+        android:background="@drawable/search_background">
+        <ImageButton
+            android:layout_gravity="start|center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="8dp"
+            android:paddingStart="@dimen/margin_small"
+            android:src="@drawable/search_icon"
+            android:background="@android:color/transparent"/>
+    <EditText
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:hint="@string/search"
+        android:layout_marginStart="36dp"
+        android:maxLines="1"
+        android:inputType="text"
+        android:textColorHint="@color/items"
+        android:textCursorDrawable="@drawable/custom_cursor"
+        android:background="@android:color/transparent"
+        />
+    <ImageButton
+        android:layout_gravity="end|center_vertical"
+        android:id="@+id/clear_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/clear_ic"
+        android:paddingStart="@dimen/margin_small"
+        android:paddingEnd="10dp"
+        android:background="@android:color/transparent"/>
+    </FrameLayout>
+</LinearLayout>
