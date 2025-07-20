@@ -2,86 +2,42 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:background="@color/backgrounds"
-android:paddingHorizontal="@dimen/margin_small"
-android:orientation="vertical">
-
-<LinearLayout
+    android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:layout_marginTop="@dimen/padding_small">
-    <ImageButton
-        android:id="@+id/backButton"
-        android:layout_width="@dimen/btn_large"
-        android:layout_height="@dimen/btn_large"
-        android:background="@android:color/transparent"
-        android:src="@drawable/back_ic"
-        app:tint="@color/text"
-        android:layout_marginStart="@dimen/padding_small" />
-    <TextView
-        style="@style/HeaderText"
-        android:layout_marginStart="@dimen/margin_small"
-        android:text="@string/options" />
-</LinearLayout>
+    android:layout_height="match_parent"
+    android:background="@color/backgrounds"
+    android:paddingHorizontal="@dimen/margin_small"
+    android:orientation="vertical">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/btn_height"
-    android:layout_marginTop="@dimen/btn_medium"
-    android:layout_marginStart="@dimen/padding_small"
-    android:gravity="center_vertical">
-    <TextView
-        style="@style/OptionText"
-        android:text="@string/is_dark_theme"/>
-    <Switch
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-</LinearLayout>
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/backbar"
+        style="@style/AppToolbar"
+        app:title="@string/options"
+        />
 
-<!-- Повторяющиеся блоки -->
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/btn_height"
-    android:layout_marginStart="@dimen/padding_small"
-    android:gravity="center_vertical">
-    <TextView
-        style="@style/OptionText"
-        android:text="@string/share"/>
-    <ImageButton
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="@dimen/padding_small"
+        android:text="@string/is_dark_theme"
+        app:trackTint="@drawable/switch_track"
+        app:thumbTint="@drawable/switch_thumb"
+        android:textSize="16sp" />
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/shareButton"
-        style="@style/OptionIconButton"
-        android:src="@drawable/share_ic"/>
-</LinearLayout>
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/btn_height"
-    android:layout_marginStart="@dimen/padding_small"
-    android:gravity="center_vertical">
-    <TextView
-        style="@style/OptionText"
-        android:text="@string/message_sup"/>
-    <ImageButton
+        style="@style/SettingsItemText"
+        android:drawableEnd="@drawable/share_ic"
+        android:text="@string/share" />
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/supportButton"
-        style="@style/OptionIconButton"
-        android:src="@drawable/support_ic"/>
-</LinearLayout>
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/btn_height"
-    android:layout_marginStart="@dimen/padding_small"
-    android:gravity="center_vertical">
-    <TextView
-        style="@style/OptionText"
-        android:text="@string/agreement"/>
-    <ImageButton
+        style="@style/SettingsItemText"
+        android:drawableEnd="@drawable/support_ic"
+        android:text="@string/message_sup" />
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/agreementButton"
-        style="@style/OptionIconButton"
-        android:src="@drawable/agreement_ic"/>
-</LinearLayout>
+        style="@style/SettingsItemText"
+        android:drawableEnd="@drawable/agreement_ic"
+        android:text="@string/agreement" />
+
 </LinearLayout>

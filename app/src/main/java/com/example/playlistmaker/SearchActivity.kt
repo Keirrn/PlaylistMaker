@@ -11,12 +11,16 @@ import android.widget.EditText
 import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
+import com.google.android.material.appbar.MaterialToolbar
 
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var inputEditText: EditText
     private lateinit var clearButton: ImageButton
-    private lateinit var backButton: ImageButton
+
 
     private var searchText: String = ""
 
@@ -28,17 +32,21 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_search)
-
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
         inputEditText = findViewById(R.id.search_bar)
         clearButton = findViewById(R.id.clear_button)
-        backButton = findViewById(R.id.backButton)
+        val backBar = findViewById<MaterialToolbar>(R.id.backbar)
 
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString(KEY_SEARCH_TEXT, "")
             inputEditText.setText(searchText)
         }
 
-        clearButton.visibility = clearButtonVisibility(searchText)
+        clearButton.isVisible = !searchText.isNullOrEmpty()
         clearButton.setOnClickListener {
             inputEditText.setText("")
             searchText = ""
@@ -46,7 +54,7 @@ class SearchActivity : AppCompatActivity() {
             hideKeyboard()
         }
 
-        backButton.setOnClickListener {
+        backBar.setNavigationOnClickListener  {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
@@ -55,7 +63,7 @@ class SearchActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchText = s?.toString() ?: ""
-                clearButton.visibility = clearButtonVisibility(s)
+                clearButton.isVisible = !s.isNullOrEmpty()
             }
             override fun afterTextChanged(s: Editable?) {}
         }
@@ -73,16 +81,10 @@ class SearchActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         searchText = savedInstanceState.getString(KEY_SEARCH_TEXT, "")
         inputEditText.setText(searchText)
-        clearButton.visibility = clearButtonVisibility(searchText)
+        clearButton.isVisible = !searchText.isNullOrEmpty()
     }
 
-    private fun clearButtonVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
-    }
+
     private fun hideKeyboard() {
         val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         val view = currentFocus ?: View(this)
