@@ -1,10 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchActivity">
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/margin_small"
+    tools:context=".SearchActivity"
+    android:background="@color/backgrounds">
+    <com.google.android.material.appbar.MaterialToolbar
+        style="@style/AppToolbar"
+        android:id="@+id/backbar"
+        app:title="@string/search"
+        />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/margin_8"
+        android:layout_marginHorizontal="@dimen/padding_small"
+        android:background="@drawable/search_background">
+    <EditText
+        android:drawableStart="@drawable/search_icon"
+        android:drawablePadding="@dimen/margin_icon_padding"
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:hint="@string/search"
+        android:paddingStart="@dimen/margin_small"
+        android:maxLines="1"
+        android:inputType="text"
+        android:textColorHint="@color/items"
+        android:textCursorDrawable="@drawable/custom_cursor"
+        android:background="@android:color/transparent"
+        />
+    <ImageButton
+        android:layout_gravity="end|center_vertical"
+        android:id="@+id/clear_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/clear_ic"
+        android:paddingStart="@dimen/margin_small"
+        android:paddingEnd="@dimen/margin_icon_padding"
+        android:background="@android:color/transparent"/>
+    </FrameLayout>
+</LinearLayout>

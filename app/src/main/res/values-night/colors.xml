@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background_main">#1A1B22</color>
-    <color name="background_settings">#1A1B22</color>
-    <color name="text">#FFFFFF</color>
-    <color name="image_col">#FFFFFF</color>
+    <color name="background_main">@color/black</color>
+    <color name="backgrounds">@color/black</color>
+    <color name="text">@color/white</color>
+    <color name="items">@color/black</color>
+    <color name="searching_filed">@color/white</color>
 </resources>
