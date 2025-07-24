@@ -12,5 +12,5 @@
     <color name="backgrounds">@color/white</color>
     <color name="items">@color/text_gray</color>
     <color name="searching_filed">@color/light_gray</color>
-
+    <color name="singer">@color/text_gray</color>
 </resources>

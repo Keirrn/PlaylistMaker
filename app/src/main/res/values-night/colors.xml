@@ -5,4 +5,5 @@
     <color name="text">@color/white</color>
     <color name="items">@color/black</color>
     <color name="searching_filed">@color/white</color>
+    <color name="singer">@color/white</color>
 </resources>

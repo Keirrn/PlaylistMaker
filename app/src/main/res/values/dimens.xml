@@ -2,17 +2,20 @@
 <resources>
     <dimen name="text_primary">22sp</dimen>
     <dimen name="text_small">16sp</dimen>
+    <dimen name="text_micro">11sp</dimen>
 
     <dimen name="margin_default">16dp</dimen>
     <dimen name="margin_small">12dp</dimen>
     <dimen name="margin_8">8dp</dimen>
     <dimen name="margin_icon_padding">10dp</dimen>
     <dimen name="margin_between_buttons">12dp</dimen>
+    <dimen name="margin_14">14dp</dimen>
     <dimen name="margin_settings_top">45dp</dimen>
 
     <dimen name="btn_large">48dp</dimen>
     <dimen name="btn_medium">24dp</dimen>
     <dimen name="btn_height">61dp</dimen>
+    <dimen name="icon_song">45dp</dimen>
 
     <dimen name="padding_small">4dp</dimen>
     <dimen name="width_zero">0dp</dimen>
