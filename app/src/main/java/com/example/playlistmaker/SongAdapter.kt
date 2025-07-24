@@ -1,5 +1,7 @@
 package com.example.playlistmaker
 
+import android.content.Context
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,9 +42,16 @@ class SongAdapter (
                 .load(track.artworkUrl100)
                 .placeholder(R.drawable.placeholder)
                 .centerCrop()
-                .transform(RoundedCorners(2))
+                .transform(RoundedCorners(dpToPx(2f, itemView.context)))
                 .into(artwork)
 
         }
+        fun dpToPx(dp: Float, context: Context): Int {
+            return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dp,
+                context.resources.displayMetrics).toInt()
+        }
     }
+
 }
