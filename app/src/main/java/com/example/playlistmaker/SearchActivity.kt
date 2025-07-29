@@ -111,8 +111,7 @@ class SearchActivity : AppCompatActivity() {
             false
         }
         backBar.setNavigationOnClickListener  {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            finish()
         }
 
         val textWatcher = object : TextWatcher {
@@ -134,24 +133,25 @@ class SearchActivity : AppCompatActivity() {
                 response: retrofit2.Response<TrackResponse>
             ) {
                 val tracks = response.body()?.results ?: emptyList()
-                if (tracks.isNotEmpty()) {
-                    placeholder.visibility = View.GONE
-                    placeholdertext.visibility = View.GONE
-                    updater.visibility=View.GONE
-                    songAdapter.updateTracks(tracks)
-                    recyclerView.visibility = View.VISIBLE
-                } else {
-                    placeholderImage = ContextCompat.getDrawable(this@SearchActivity, R.drawable.nofound)!!
-                    placeholder.setImageDrawable(placeholderImage)
-                    placeholdertext.setText("Ничего не нашлось")
-                }
+                songAdapter.updateTracks(tracks)
+                placeholderImage = ContextCompat.getDrawable(this@SearchActivity, R.drawable.nofound)!!
+                placeholder.setImageDrawable(placeholderImage)
+                placeholdertext.setText("Ничего не нашлось")
+                updater.isVisible = false
+                placeholder.isVisible = tracks.isEmpty()
+                placeholdertext.isVisible = tracks.isEmpty()
+                recyclerView.isVisible = tracks.isNotEmpty()
             }
 
             override fun onFailure(call: retrofit2.Call<TrackResponse>, t: Throwable) {
-                placeholderImage = ContextCompat.getDrawable(this@SearchActivity, R.drawable.nointernet)!!
-                placeholder.setImageDrawable(placeholderImage)
-                placeholdertext.setText("Проблемы со связью\n" + "\n" + "Загрузка не удалась. Проверьте подключение к интернету")
-                updater.visibility = View.VISIBLE
+                placeholder.setImageDrawable(
+                    ContextCompat.getDrawable(this@SearchActivity, R.drawable.nointernet)
+                )
+                placeholdertext.text = "Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету"
+                placeholder.isVisible = true
+                placeholdertext.isVisible = true
+                updater.isVisible = true
+                recyclerView.isVisible = false
             }
         })
     }
