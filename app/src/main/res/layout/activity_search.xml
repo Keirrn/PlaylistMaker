@@ -33,6 +33,10 @@
         android:paddingStart="@dimen/margin_small"
         android:maxLines="1"
         android:inputType="text"
+        android:textColor="@color/black"
+        android:fontFamily="@font/ys_display_regular"
+        android:textSize="@dimen/text_small"
+        android:textFontWeight="400"
         android:textColorHint="@color/items"
         android:textCursorDrawable="@drawable/custom_cursor"
         android:background="@android:color/transparent"
@@ -47,4 +51,10 @@
         android:paddingEnd="@dimen/margin_icon_padding"
         android:background="@android:color/transparent"/>
     </FrameLayout>
+    <androidx.recyclerview.widget.RecyclerView
+       android:layout_marginTop="@dimen/margin_default"
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 </LinearLayout>
