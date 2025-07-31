@@ -32,8 +32,7 @@ class SettingsActivity : AppCompatActivity() {
         }
         val backBar = findViewById<MaterialToolbar>(R.id.backbar)
         backBar.setNavigationOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            finish()
         }
 
         val shareButton = findViewById<MaterialTextView>(R.id.shareButton)
