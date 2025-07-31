@@ -11,6 +11,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
 
 
@@ -33,6 +34,15 @@ class SettingsActivity : AppCompatActivity() {
         val backBar = findViewById<MaterialToolbar>(R.id.backbar)
         backBar.setNavigationOnClickListener {
             finish()
+        }
+
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+        val sharedPrefs = getSharedPreferences(PLAYLISTMAKER_PREFERENCES, MODE_PRIVATE)
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            sharedPrefs.edit()
+                .putBoolean(SWITCHER_KEY, checked)
+                .apply()
+            (applicationContext as App).switchTheme(checked)
         }
 
         val shareButton = findViewById<MaterialTextView>(R.id.shareButton)
