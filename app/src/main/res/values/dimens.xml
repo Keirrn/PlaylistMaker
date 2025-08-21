@@ -3,7 +3,10 @@
     <dimen name="text_primary">22sp</dimen>
     <dimen name="text_small">16sp</dimen>
     <dimen name="text_micro">11sp</dimen>
+    <dimen name="text_title">19sp</dimen>
+    <dimen name="text_button_small">14sp</dimen>
 
+    <dimen name="margin_24">24dp</dimen>
     <dimen name="margin_default">16dp</dimen>
     <dimen name="margin_small">12dp</dimen>
     <dimen name="margin_8">8dp</dimen>

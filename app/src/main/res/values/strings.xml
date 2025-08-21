@@ -14,4 +14,6 @@
     <string name="support_email_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="support_email_body">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="update">Обновить</string>
+    <string name="you_search">Вы искали</string>
+    <string name="remove_history">Очистить историю</string>
 </resources>
