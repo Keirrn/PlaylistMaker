@@ -16,7 +16,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class SongAdapter (): RecyclerView.Adapter<SongAdapter.SongViewHolder>() {
+class SongAdapter (
+    private val onTrackClick: (Track) -> Unit
+): RecyclerView.Adapter<SongAdapter.SongViewHolder>() {
 
     private var tracks= ArrayList<Track>()
 
@@ -31,8 +33,9 @@ class SongAdapter (): RecyclerView.Adapter<SongAdapter.SongViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
-        holder.bind(tracks[position])
-
+        val track = tracks[position]
+        holder.bind(track)
+        holder.itemView.setOnClickListener { onTrackClick(track) }
     }
 
     override fun getItemCount(): Int {

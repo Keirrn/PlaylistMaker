@@ -10,6 +10,9 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 
+const val PLAYLISTMAKER_PREFERENCES = "playlistmaker_preferences"
+const val SWITCHER_KEY = "key_for_switcher"
+
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

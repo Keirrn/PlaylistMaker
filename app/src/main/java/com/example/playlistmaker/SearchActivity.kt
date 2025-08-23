@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +27,7 @@ import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.model.ITunesApi
+import com.example.playlistmaker.model.SearchHistory
 import com.example.playlistmaker.model.Track
 import com.example.playlistmaker.model.TrackResponse
 import com.google.android.material.appbar.MaterialToolbar
@@ -34,6 +36,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
+    private lateinit var searchHistory: SearchHistory
     private lateinit var inputEditText: EditText
     private lateinit var clearButton: ImageButton
     private lateinit var translationService: ITunesApi
@@ -44,6 +47,11 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholdertext: TextView
     private lateinit var updater: Button
     private var searchText: String = ""
+    private lateinit var historyLayout: LinearLayout
+    private lateinit var historyRecyclerView: RecyclerView
+    private lateinit var historyAdapter: SongAdapter
+    private lateinit var removeHistoryButton: Button
+
 
     companion object {
         const val KEY_SEARCH_TEXT = "saved_search_text"
@@ -66,13 +74,36 @@ class SearchActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        songAdapter = SongAdapter()
+        songAdapter = SongAdapter { track ->
+            searchHistory.addTrack(track)
+            updateHistory()
+        }
         recyclerView.adapter = songAdapter
         inputEditText = findViewById(R.id.search_bar)
         clearButton = findViewById(R.id.clear_button)
         placeholder = findViewById(R.id.placeholder)
         placeholdertext = findViewById(R.id.placeholder_text)
         updater = findViewById(R.id.update_btn)
+        historyLayout = findViewById(R.id.history_layout)
+        historyRecyclerView = findViewById(R.id.historyRecyclerView)
+        removeHistoryButton = findViewById(R.id.remove)
+        searchHistory = SearchHistory(
+            getSharedPreferences(PLAYLISTMAKER_PREFERENCES, MODE_PRIVATE)
+        )
+        historyAdapter = SongAdapter { track ->
+        }
+        historyRecyclerView.layoutManager = LinearLayoutManager(this)
+        historyRecyclerView.adapter = historyAdapter
+
+        updateHistory()
+
+        removeHistoryButton.setOnClickListener {
+            searchHistory.clear()
+            updateHistory()
+        }
+
+
+
 
         val translateBaseUrl = "https://itunes.apple.com"
         val retrofit = Retrofit.Builder()
@@ -119,6 +150,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchText = s?.toString() ?: ""
                 clearButton.isVisible = !s.isNullOrEmpty()
+                updateHistory()
             }
             override fun afterTextChanged(s: Editable?) {}
         }
@@ -175,4 +207,19 @@ class SearchActivity : AppCompatActivity() {
         val view = currentFocus ?: View(this)
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
+    private fun updateHistory() {
+        val history = searchHistory.getHistory()
+
+        if (history.isNotEmpty() && inputEditText.text.isNullOrEmpty()) {
+            historyLayout.visibility = View.VISIBLE
+            historyAdapter.updateTracks(history)
+            val itemCount = history.size
+            val params = historyRecyclerView.layoutParams as LinearLayout.LayoutParams
+            params.weight = itemCount.toFloat()
+            historyRecyclerView.layoutParams = params
+        } else {
+            historyLayout.visibility = View.GONE
+        }
+    }
+
 }

@@ -10,11 +10,12 @@
     android:paddingHorizontal="@dimen/margin_small"
     tools:context=".SearchActivity"
     android:background="@color/backgrounds">
+
     <com.google.android.material.appbar.MaterialToolbar
         style="@style/AppToolbar"
         android:id="@+id/backbar"
-        app:title="@string/search"
-        />
+        app:title="@string/search" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,65 +23,104 @@
         android:layout_marginTop="@dimen/margin_8"
         android:layout_marginHorizontal="@dimen/padding_small"
         android:background="@drawable/search_background">
-    <EditText
-        android:imeOptions="actionDone"
-        android:singleLine="true"
-        android:drawableStart="@drawable/search_icon"
-        android:drawablePadding="@dimen/margin_icon_padding"
-        android:id="@+id/search_bar"
-        android:layout_width="match_parent"
-        android:layout_gravity="center_vertical"
-        android:layout_height="wrap_content"
-        android:hint="@string/search"
-        android:paddingStart="@dimen/margin_small"
-        android:maxLines="1"
-        android:inputType="text"
-        android:textColor="@color/black"
-        android:fontFamily="@font/ys_display_regular"
-        android:textSize="@dimen/text_small"
-        android:textFontWeight="400"
-        android:textColorHint="@color/items"
-        android:textCursorDrawable="@drawable/custom_cursor"
-        android:background="@android:color/transparent"
-        />
-    <ImageButton
-        android:layout_gravity="end|center_vertical"
-        android:id="@+id/clear_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/clear_ic"
-        android:paddingStart="@dimen/margin_small"
-        android:paddingEnd="@dimen/margin_icon_padding"
-        android:background="@android:color/transparent"/>
+
+        <EditText
+            android:imeOptions="actionDone"
+            android:singleLine="true"
+            android:drawableStart="@drawable/search_icon"
+            android:drawablePadding="@dimen/margin_icon_padding"
+            android:id="@+id/search_bar"
+            android:layout_width="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_height="wrap_content"
+            android:hint="@string/search"
+            android:paddingStart="@dimen/margin_small"
+            android:maxLines="1"
+            android:inputType="text"
+            android:textColor="@color/black"
+            android:fontFamily="@font/ys_display_regular"
+            android:textSize="@dimen/text_small"
+            android:textFontWeight="400"
+            android:textColorHint="@color/items"
+            android:textCursorDrawable="@drawable/custom_cursor"
+            android:background="@android:color/transparent" />
+
+        <ImageButton
+            android:layout_gravity="end|center_vertical"
+            android:id="@+id/clear_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/clear_ic"
+            android:paddingStart="@dimen/margin_small"
+            android:paddingEnd="@dimen/margin_icon_padding"
+            android:background="@android:color/transparent"/>
     </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/history_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/SectionTitle"
+            android:layout_marginTop="@dimen/margin_24"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="@string/you_search"
+            android:layout_gravity="center_horizontal"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginTop="@dimen/margin_8"
+            android:id="@+id/historyRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <Button
+            style="@style/Button"
+            android:id="@+id/remove"
+            android:layout_marginTop="@dimen/margin_24"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/text"
+            android:textColor="@color/backgrounds"
+            android:text="@string/remove_history"/>
+    </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
+
         <androidx.recyclerview.widget.RecyclerView
             android:layout_marginTop="@dimen/margin_default"
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-    <ImageView
-        android:id="@+id/placeholder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="102dp"
-        />
+
+        <ImageView
+            android:id="@+id/placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="102dp"/>
+
         <TextView
             android:id="@+id/placeholder_text"
-            android:textAlignment="center"
+            style="@style/SectionTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="238dp"
-            android:textFontWeight="400"
-            android:textSize="19sp"
-            android:textColor="@color/text"
-            android:fontFamily="@font/ys_display_medium"/>
+            android:textAlignment="center"
+            android:textFontWeight="400"/>
+
         <Button
+            style="@style/Button"
             android:id="@+id/update_btn"
             android:layout_marginTop="350dp"
             android:visibility="gone"
@@ -89,11 +129,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/text"
             android:textColor="@color/backgrounds"
-            android:fontFamily="@font/ys_display_medium"
-            android:textSize="14sp"
-            android:text="@string/update"
-            style="@style/Button"
-            />
-
+            android:text="@string/update"/>
     </FrameLayout>
+
 </LinearLayout>
