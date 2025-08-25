@@ -226,10 +226,6 @@ class SearchActivity : AppCompatActivity() {
         if (history.isNotEmpty() && inputEditText.text.isNullOrEmpty()) {
             historyLayout.visibility = View.VISIBLE
             historyAdapter.updateTracks(history)
-//            val itemCount = history.size
-//            val params = historyRecyclerView.layoutParams as LinearLayout.LayoutParams
-//            params.weight = itemCount.toFloat()
-//            historyRecyclerView.layoutParams = params
         } else {
             historyLayout.visibility = View.GONE
         }
