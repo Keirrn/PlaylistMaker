@@ -1,15 +1,12 @@
 package com.example.playlistmaker
 
-import android.content.Intent
+
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -21,8 +18,6 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
 
 class AudioPlayer : AppCompatActivity() {
-    private lateinit var track: Track
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -37,11 +32,11 @@ class AudioPlayer : AppCompatActivity() {
 
             insets
         }
-        track = if (savedInstanceState != null) {
-            val trackJson = savedInstanceState.getString("trackJson")
+        val track = if (savedInstanceState != null) {
+            val trackJson = savedInstanceState.getString(TRACK_JSON_KEY)
             Gson().fromJson(trackJson, Track::class.java)
         } else {
-            Gson().fromJson(intent.getStringExtra("trackJson"), Track::class.java)
+            Gson().fromJson(intent.getStringExtra(TRACK_JSON_KEY), Track::class.java)
         }
         val backBar = findViewById<MaterialToolbar>(R.id.backbar)
         backBar.setNavigationOnClickListener {
@@ -88,8 +83,8 @@ class AudioPlayer : AppCompatActivity() {
             .transform(RoundedCorners(dpToPx(8f, this)))
             .into(cover)
     }
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString("trackJson", Gson().toJson(track))
+    companion object {
+        const val TRACK_JSON_KEY = "trackJson"
     }
+
 }
