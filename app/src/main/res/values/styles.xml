@@ -10,10 +10,11 @@
         <item name="android:textFontWeight">500</item>
     </style>
     <style name="TextAudioPlayer" parent="HeaderText">
+        <item name="android:layout_height">32dp</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textSize">@dimen/text_audio_player</item>
         <item name="android:textFontWeight">400</item>
-        <item name="android:layout_marginVertical">@dimen/margin_8</item>
+        <item name="android:layout_gravity">center_vertical</item>
         <item name="android:layout_marginHorizontal">@dimen/margin_default</item>
     </style>
     <style name="GrayTextPlayer" parent="TextAudioPlayer">
