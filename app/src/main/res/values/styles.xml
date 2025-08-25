@@ -14,7 +14,7 @@
         <item name="android:textSize">@dimen/text_audio_player</item>
         <item name="android:textFontWeight">400</item>
         <item name="android:layout_marginVertical">@dimen/margin_8</item>
-        <item name="android:layout_marginStart">@dimen/margin_default</item>
+        <item name="android:layout_marginHorizontal">@dimen/margin_default</item>
     </style>
     <style name="GrayTextPlayer" parent="TextAudioPlayer">
         <item name="android:textColor">@color/text_gray</item>

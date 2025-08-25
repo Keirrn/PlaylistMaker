@@ -15,6 +15,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.model.Track
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
@@ -83,6 +84,8 @@ class AudioPlayer : AppCompatActivity() {
         Glide.with(this)
             .load(track.artworkUrl100.replaceAfterLast("/", "512x512bb.jpg"))
             .placeholder(R.drawable.placeholder_audioplayer)
+            .centerCrop()
+            .transform(RoundedCorners(dpToPx(8f, this)))
             .into(cover)
     }
     override fun onSaveInstanceState(outState: Bundle) {
