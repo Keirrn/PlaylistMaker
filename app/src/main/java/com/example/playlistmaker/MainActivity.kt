@@ -9,10 +9,15 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 const val PLAYLISTMAKER_PREFERENCES = "playlistmaker_preferences"
 const val SWITCHER_KEY = "key_for_switcher"
-
+fun formatMillis(millis: Long): String {
+    return SimpleDateFormat("mm:ss", Locale.getDefault()).format(Date(millis))
+}
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

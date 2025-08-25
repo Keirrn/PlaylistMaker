@@ -61,10 +61,8 @@ class SongAdapter (
                 .into(artwork)
 
         }
-        private fun formatMillis(millis: Long): String {
-            return SimpleDateFormat("mm:ss", Locale.getDefault()).format(Date(millis))
-        }
-        fun dpToPx(dp: Float, context: Context): Int {
+
+        private fun dpToPx(dp: Float, context: Context): Int {
             return TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 dp,
