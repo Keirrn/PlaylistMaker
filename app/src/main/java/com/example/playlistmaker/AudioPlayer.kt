@@ -20,6 +20,8 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
 
 class AudioPlayer : AppCompatActivity() {
+    private lateinit var track: Track
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -34,12 +36,16 @@ class AudioPlayer : AppCompatActivity() {
 
             insets
         }
-
+        track = if (savedInstanceState != null) {
+            val trackJson = savedInstanceState.getString("trackJson")
+            Gson().fromJson(trackJson, Track::class.java)
+        } else {
+            Gson().fromJson(intent.getStringExtra("trackJson"), Track::class.java)
+        }
         val backBar = findViewById<MaterialToolbar>(R.id.backbar)
         backBar.setNavigationOnClickListener {
             finish()
         }
-        val track = Gson().fromJson(intent.getStringExtra("trackJson"), Track::class.java)
         val cover = findViewById<ImageView>(R.id.album_cover)
         val song = findViewById<TextView>(R.id.song)
         val singer = findViewById<TextView>(R.id.singer)
@@ -78,5 +84,9 @@ class AudioPlayer : AppCompatActivity() {
             .load(track.artworkUrl100.replaceAfterLast("/", "512x512bb.jpg"))
             .placeholder(R.drawable.placeholder_audioplayer)
             .into(cover)
+    }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("trackJson", Gson().toJson(track))
     }
 }

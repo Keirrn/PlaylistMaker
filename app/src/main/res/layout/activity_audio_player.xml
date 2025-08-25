@@ -39,7 +39,6 @@
                 style="@style/HeaderText"
                 android:layout_marginStart="@dimen/margin_24"
                 android:layout_marginTop="@dimen/margin_24"
-                android:text="songsongsong"
                 android:textFontWeight="400"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/album_cover" />
@@ -49,7 +48,6 @@
                 style="@style/HeaderText"
                 android:layout_marginStart="@dimen/margin_24"
                 android:layout_marginTop="@dimen/margin_small"
-                android:text="singer"
                 android:textFontWeight="400"
                 android:textSize="@dimen/text_button_small"
                 app:layout_constraintStart_toStartOf="parent"
@@ -112,7 +110,6 @@
                 style="@style/TextAudioPlayer"
                 android:layout_marginBottom="@dimen/margin_8"
                 android:layout_marginTop="9dp"
-                android:text="elfelff"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/duration"
                 app:layout_constraintTop_toBottomOf="@id/timer_song" />
@@ -128,7 +125,6 @@
             <TextView
                 android:id="@+id/collection_name"
                 style="@style/TextAudioPlayer"
-                android:text="elfff"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/collection"
                 app:layout_constraintTop_toBottomOf="@id/duration" />
@@ -144,7 +140,6 @@
             <TextView
                 android:id="@+id/track_year"
                 style="@style/TextAudioPlayer"
-                android:text="elfff"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/year"
                 app:layout_constraintTop_toBottomOf="@id/collection" />
@@ -161,7 +156,6 @@
                 android:id="@+id/track_genre"
                 style="@style/TextAudioPlayer"
                 android:layout_marginBottom="@dimen/margin_8"
-                android:text="elfff"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/genre"
                 app:layout_constraintTop_toBottomOf="@id/year" />
@@ -177,7 +171,6 @@
             <TextView
                 android:id="@+id/track_country"
                 style="@style/TextAudioPlayer"
-                android:text="elfff"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/country"
                 app:layout_constraintTop_toBottomOf="@id/genre" />
