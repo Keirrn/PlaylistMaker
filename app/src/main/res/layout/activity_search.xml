@@ -55,28 +55,28 @@
             android:paddingEnd="@dimen/margin_icon_padding"
             android:background="@android:color/transparent"/>
     </FrameLayout>
-
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
     <LinearLayout
         android:id="@+id/history_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:orientation="vertical">
-
         <TextView
             style="@style/SectionTitle"
-            android:layout_marginTop="@dimen/margin_24"
+            android:layout_marginTop="42dp"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:text="@string/you_search"
             android:layout_gravity="center_horizontal"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_marginTop="@dimen/margin_8"
+            android:layout_marginTop="@dimen/padding_settings_item"
             android:id="@+id/historyRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="0dp" />
+            android:layout_height="wrap_content" />
 
         <Button
             style="@style/Button"
@@ -84,13 +84,12 @@
             android:layout_marginTop="@dimen/margin_24"
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:backgroundTint="@color/text"
             android:textColor="@color/backgrounds"
             android:text="@string/remove_history"/>
     </LinearLayout>
-
+</ScrollView>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

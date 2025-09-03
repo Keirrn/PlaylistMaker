@@ -4,6 +4,7 @@
     <dimen name="text_small">16sp</dimen>
     <dimen name="text_micro">11sp</dimen>
     <dimen name="text_title">19sp</dimen>
+    <dimen name="text_audio_player">13sp</dimen>
     <dimen name="text_button_small">14sp</dimen>
 
     <dimen name="margin_24">24dp</dimen>
@@ -14,6 +15,7 @@
     <dimen name="margin_between_buttons">12dp</dimen>
     <dimen name="margin_14">14dp</dimen>
     <dimen name="margin_settings_top">45dp</dimen>
+    <dimen name="big_margin">54dp</dimen>
 
     <dimen name="btn_large">48dp</dimen>
     <dimen name="btn_medium">24dp</dimen>

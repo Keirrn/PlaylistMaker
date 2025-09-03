@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -31,8 +32,12 @@ import com.example.playlistmaker.model.SearchHistory
 import com.example.playlistmaker.model.Track
 import com.example.playlistmaker.model.TrackResponse
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.gson.Gson
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class SearchActivity : AppCompatActivity() {
 
@@ -75,6 +80,9 @@ class SearchActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         songAdapter = SongAdapter { track ->
+            val intent = Intent(this, AudioPlayer::class.java)
+            intent.putExtra("trackJson", Gson().toJson(track))
+            startActivity(intent)
             searchHistory.addTrack(track)
             updateHistory()
         }
@@ -91,6 +99,11 @@ class SearchActivity : AppCompatActivity() {
             getSharedPreferences(PLAYLISTMAKER_PREFERENCES, MODE_PRIVATE)
         )
         historyAdapter = SongAdapter { track ->
+            val intent = Intent(this, AudioPlayer::class.java)
+            intent.putExtra("trackJson", Gson().toJson(track))
+            startActivity(intent)
+            searchHistory.addTrack(track)
+            updateHistory()
         }
         historyRecyclerView.layoutManager = LinearLayoutManager(this)
         historyRecyclerView.adapter = historyAdapter
@@ -213,10 +226,6 @@ class SearchActivity : AppCompatActivity() {
         if (history.isNotEmpty() && inputEditText.text.isNullOrEmpty()) {
             historyLayout.visibility = View.VISIBLE
             historyAdapter.updateTracks(history)
-            val itemCount = history.size
-            val params = historyRecyclerView.layoutParams as LinearLayout.LayoutParams
-            params.weight = itemCount.toFloat()
-            historyRecyclerView.layoutParams = params
         } else {
             historyLayout.visibility = View.GONE
         }
