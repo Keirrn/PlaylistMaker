@@ -3,6 +3,8 @@ package com.example.playlistmaker
 
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -22,18 +24,29 @@ import com.google.gson.Gson
 class AudioPlayer : AppCompatActivity() {
 
     companion object {
+        const val DEFAULT_TIME = "00:00"
         const val TRACK_JSON_KEY = "trackJson"
+        private const val DELAY = 250L
         private const val STATE_DEFAULT = 0
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
     }
 
-    private var playerState = STATE_DEFAULT
-
+    private lateinit var timerSong : TextView
     private lateinit var mediaPlayer : MediaPlayer
     private lateinit var playButton: ImageButton
+    private lateinit var mainHandler: Handler
     private lateinit var url: String
+
+    private var playerState = STATE_DEFAULT
+    private val updateTimerRunnable = object : Runnable {
+        override fun run() {
+            if(playerState == STATE_PLAYING){
+            timerSong.text = formatMillis(mediaPlayer.currentPosition.toLong())
+            mainHandler.postDelayed(this, DELAY)}
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -63,6 +76,7 @@ class AudioPlayer : AppCompatActivity() {
             finish()
         }
         url = track.previewUrl
+        timerSong = findViewById(R.id.timer_song)
         val cover = findViewById<ImageView>(R.id.album_cover)
         val song = findViewById<TextView>(R.id.song)
         val singer = findViewById<TextView>(R.id.singer)
@@ -104,6 +118,7 @@ class AudioPlayer : AppCompatActivity() {
             .centerCrop()
             .transform(RoundedCorners(dpToPx(8f, this)))
             .into(cover)
+
         mediaPlayer= MediaPlayer()
         playButton = findViewById(R.id.play_btn)
         playButton.isEnabled = false
@@ -111,6 +126,9 @@ class AudioPlayer : AppCompatActivity() {
         playButton.setOnClickListener {
             playbackControl()
         }
+
+        mainHandler = Handler(Looper.getMainLooper())
+
     }
 
 
@@ -123,6 +141,8 @@ class AudioPlayer : AppCompatActivity() {
         }
         mediaPlayer.setOnCompletionListener {
             playButton.setImageResource(R.drawable.play_song_ic)
+            mainHandler.removeCallbacks(updateTimerRunnable)
+            timerSong.text = DEFAULT_TIME
             playerState = STATE_PREPARED
         }
     }
@@ -130,11 +150,13 @@ class AudioPlayer : AppCompatActivity() {
     private fun startPlayer() {
         mediaPlayer.start()
         playButton.setImageResource(R.drawable.stop_song_ic)
+        mainHandler.postDelayed(updateTimerRunnable, DELAY)
         playerState = STATE_PLAYING
     }
     private fun pausePlayer() {
         mediaPlayer.pause()
         playButton.setImageResource(R.drawable.play_song_ic)
+        mainHandler.removeCallbacks(updateTimerRunnable)
         playerState = STATE_PAUSED
     }
 
@@ -156,6 +178,7 @@ class AudioPlayer : AppCompatActivity() {
     }
     override fun onDestroy() {
         super.onDestroy()
+        mainHandler.removeCallbacks(updateTimerRunnable)
         mediaPlayer.release()
     }
 }
