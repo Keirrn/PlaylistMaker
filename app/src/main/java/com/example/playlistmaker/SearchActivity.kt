@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -56,10 +58,15 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyRecyclerView: RecyclerView
     private lateinit var historyAdapter: SongAdapter
     private lateinit var removeHistoryButton: Button
-
+    private lateinit var progressBar: View
+    private val searchRunnable = Runnable { searchSongs(searchText) }
+    private val handler = Handler(Looper.getMainLooper())
+    private var isClickAllowed = true
 
     companion object {
         const val KEY_SEARCH_TEXT = "saved_search_text"
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,12 +87,15 @@ class SearchActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         songAdapter = SongAdapter { track ->
+            if (clickDebounce()) {
             val intent = Intent(this, AudioPlayer::class.java)
             intent.putExtra("trackJson", Gson().toJson(track))
             startActivity(intent)
             searchHistory.addTrack(track)
             updateHistory()
+            }
         }
+        progressBar = findViewById(R.id.progressBarLayout)
         recyclerView.adapter = songAdapter
         inputEditText = findViewById(R.id.search_bar)
         clearButton = findViewById(R.id.clear_button)
@@ -99,11 +109,13 @@ class SearchActivity : AppCompatActivity() {
             getSharedPreferences(PLAYLISTMAKER_PREFERENCES, MODE_PRIVATE)
         )
         historyAdapter = SongAdapter { track ->
+            if (clickDebounce()) {
             val intent = Intent(this, AudioPlayer::class.java)
             intent.putExtra("trackJson", Gson().toJson(track))
             startActivity(intent)
             searchHistory.addTrack(track)
             updateHistory()
+            }
         }
         historyRecyclerView.layoutManager = LinearLayoutManager(this)
         historyRecyclerView.adapter = historyAdapter
@@ -114,8 +126,6 @@ class SearchActivity : AppCompatActivity() {
             searchHistory.clear()
             updateHistory()
         }
-
-
 
 
         val translateBaseUrl = "https://itunes.apple.com"
@@ -158,11 +168,14 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
+
+
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchText = s?.toString() ?: ""
                 clearButton.isVisible = !s.isNullOrEmpty()
+                searchDebounce()
                 updateHistory()
             }
             override fun afterTextChanged(s: Editable?) {}
@@ -171,12 +184,20 @@ class SearchActivity : AppCompatActivity() {
         inputEditText.addTextChangedListener(textWatcher)
     }
 
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
     private fun searchSongs(query: String) {
+        if (searchText.isNotEmpty()) {
+            progressBar.visibility = View.VISIBLE
         translationService.searchSongs(query).enqueue(object : retrofit2.Callback<TrackResponse> {
             override fun onResponse(
                 call: retrofit2.Call<TrackResponse>,
                 response: retrofit2.Response<TrackResponse>
             ) {
+               progressBar.visibility = View.GONE
                 val tracks = response.body()?.results ?: emptyList()
                 songAdapter.updateTracks(tracks)
                 placeholderImage = ContextCompat.getDrawable(this@SearchActivity, R.drawable.nofound)!!
@@ -192,13 +213,14 @@ class SearchActivity : AppCompatActivity() {
                 placeholder.setImageDrawable(
                     ContextCompat.getDrawable(this@SearchActivity, R.drawable.nointernet)
                 )
+                progressBar.visibility = View.GONE
                 placeholdertext.text = "Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету"
                 placeholder.isVisible = true
                 placeholdertext.isVisible = true
                 updater.isVisible = true
                 recyclerView.isVisible = false
             }
-        })
+        })}
     }
 
 
@@ -229,6 +251,14 @@ class SearchActivity : AppCompatActivity() {
         } else {
             historyLayout.visibility = View.GONE
         }
+    }
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 
 }
