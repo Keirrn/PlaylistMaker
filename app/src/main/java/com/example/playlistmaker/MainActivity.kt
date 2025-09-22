@@ -20,12 +20,15 @@ const val SWITCHER_KEY = "key_for_switcher"
 fun formatMillis(millis: Long): String {
     return SimpleDateFormat("mm:ss", Locale.getDefault()).format(Date(millis))
 }
+
 fun dpToPx(dp: Float, context: Context): Int {
     return TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_DIP,
         dp,
-        context.resources.displayMetrics).toInt()
+        context.resources.displayMetrics
+    ).toInt()
 }
+
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

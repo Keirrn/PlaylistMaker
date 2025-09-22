@@ -23,18 +23,8 @@ import com.google.gson.Gson
 
 class AudioPlayer : AppCompatActivity() {
 
-    companion object {
-        const val DEFAULT_TIME = "00:00"
-        const val TRACK_JSON_KEY = "trackJson"
-        private const val DELAY = 250L
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-    }
-
-    private lateinit var timerSong : TextView
-    private lateinit var mediaPlayer : MediaPlayer
+    private lateinit var timerSong: TextView
+    private lateinit var mediaPlayer: MediaPlayer
     private lateinit var playButton: ImageButton
     private lateinit var mainHandler: Handler
     private lateinit var url: String
@@ -42,9 +32,10 @@ class AudioPlayer : AppCompatActivity() {
     private var playerState = STATE_DEFAULT
     private val updateTimerRunnable = object : Runnable {
         override fun run() {
-            if(playerState == STATE_PLAYING){
-            timerSong.text = formatMillis(mediaPlayer.currentPosition.toLong())
-            mainHandler.postDelayed(this, DELAY)}
+            if (playerState == STATE_PLAYING) {
+                timerSong.text = formatMillis(mediaPlayer.currentPosition.toLong())
+                mainHandler.postDelayed(this, DELAY)
+            }
         }
     }
 
@@ -91,23 +82,21 @@ class AudioPlayer : AppCompatActivity() {
         song.text = track.trackName
         singer.text = track.artistName
         collection.text = track.collectionName ?: ""
-        year.text = track.releaseDate?.substring(0,4) ?: ""
+        year.text = track.releaseDate?.substring(0, 4) ?: ""
         genre.text = track.primaryGenreName
         country.text = track.country
         duration.text = formatMillis(track.trackTimeMillis)
-        if (track.collectionName == null){
+        if (track.collectionName == null) {
             collection.visibility = View.GONE
             collection_nc.visibility = View.GONE
-        }
-        else{
+        } else {
             collection.visibility = View.VISIBLE
             collection_nc.visibility = View.VISIBLE
         }
-        if (track.releaseDate == null){
+        if (track.releaseDate == null) {
             year.visibility = View.GONE
             year_nc.visibility = View.GONE
-        }
-        else{
+        } else {
             year.visibility = View.VISIBLE
             year_nc.visibility = View.VISIBLE
         }
@@ -119,7 +108,7 @@ class AudioPlayer : AppCompatActivity() {
             .transform(RoundedCorners(dpToPx(8f, this)))
             .into(cover)
 
-        mediaPlayer= MediaPlayer()
+        mediaPlayer = MediaPlayer()
         playButton = findViewById(R.id.play_btn)
         playButton.isEnabled = false
         preparePlayer()
@@ -153,6 +142,7 @@ class AudioPlayer : AppCompatActivity() {
         mainHandler.postDelayed(updateTimerRunnable, DELAY)
         playerState = STATE_PLAYING
     }
+
     private fun pausePlayer() {
         mediaPlayer.pause()
         playButton.setImageResource(R.drawable.play_song_ic)
@@ -161,10 +151,11 @@ class AudioPlayer : AppCompatActivity() {
     }
 
     private fun playbackControl() {
-        when(playerState) {
+        when (playerState) {
             STATE_PLAYING -> {
                 pausePlayer()
             }
+
             STATE_PREPARED, STATE_PAUSED -> {
                 startPlayer()
             }
@@ -176,9 +167,21 @@ class AudioPlayer : AppCompatActivity() {
         super.onPause()
         pausePlayer()
     }
+
     override fun onDestroy() {
         super.onDestroy()
         mainHandler.removeCallbacks(updateTimerRunnable)
         mediaPlayer.release()
+    }
+
+
+    companion object {
+        const val DEFAULT_TIME = "00:00"
+        const val TRACK_JSON_KEY = "trackJson"
+        private const val DELAY = 250L
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
     }
 }

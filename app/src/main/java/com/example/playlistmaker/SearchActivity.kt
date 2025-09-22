@@ -8,7 +8,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -20,7 +19,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.Placeholder
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -31,15 +29,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.model.ITunesApi
 import com.example.playlistmaker.model.SearchHistory
-import com.example.playlistmaker.model.Track
 import com.example.playlistmaker.model.TrackResponse
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class SearchActivity : AppCompatActivity() {
 
@@ -63,11 +57,6 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
 
-    companion object {
-        const val KEY_SEARCH_TEXT = "saved_search_text"
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,11 +77,11 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         songAdapter = SongAdapter { track ->
             if (clickDebounce()) {
-            val intent = Intent(this, AudioPlayer::class.java)
-            intent.putExtra("trackJson", Gson().toJson(track))
-            startActivity(intent)
-            searchHistory.addTrack(track)
-            updateHistory()
+                val intent = Intent(this, AudioPlayer::class.java)
+                intent.putExtra("trackJson", Gson().toJson(track))
+                startActivity(intent)
+                searchHistory.addTrack(track)
+                updateHistory()
             }
         }
         progressBar = findViewById(R.id.progressBarLayout)
@@ -110,11 +99,11 @@ class SearchActivity : AppCompatActivity() {
         )
         historyAdapter = SongAdapter { track ->
             if (clickDebounce()) {
-            val intent = Intent(this, AudioPlayer::class.java)
-            intent.putExtra("trackJson", Gson().toJson(track))
-            startActivity(intent)
-            searchHistory.addTrack(track)
-            updateHistory()
+                val intent = Intent(this, AudioPlayer::class.java)
+                intent.putExtra("trackJson", Gson().toJson(track))
+                startActivity(intent)
+                searchHistory.addTrack(track)
+                updateHistory()
             }
         }
         historyRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -154,7 +143,7 @@ class SearchActivity : AppCompatActivity() {
             recyclerView.visibility = View.GONE
             placeholder.visibility = View.GONE
             placeholdertext.visibility = View.GONE
-            updater.visibility=View.GONE
+            updater.visibility = View.GONE
             hideKeyboard()
         }
         inputEditText.setOnEditorActionListener { _, actionId, _ ->
@@ -164,10 +153,10 @@ class SearchActivity : AppCompatActivity() {
             }
             false
         }
-        backBar.setNavigationOnClickListener  {
+        backBar.setNavigationOnClickListener {
+            handler.removeCallbacks(searchRunnable)
             finish()
         }
-
 
 
         val textWatcher = object : TextWatcher {
@@ -178,6 +167,7 @@ class SearchActivity : AppCompatActivity() {
                 searchDebounce()
                 updateHistory()
             }
+
             override fun afterTextChanged(s: Editable?) {}
         }
 
@@ -192,35 +182,39 @@ class SearchActivity : AppCompatActivity() {
     private fun searchSongs(query: String) {
         if (searchText.isNotEmpty()) {
             progressBar.visibility = View.VISIBLE
-        translationService.searchSongs(query).enqueue(object : retrofit2.Callback<TrackResponse> {
-            override fun onResponse(
-                call: retrofit2.Call<TrackResponse>,
-                response: retrofit2.Response<TrackResponse>
-            ) {
-               progressBar.visibility = View.GONE
-                val tracks = response.body()?.results ?: emptyList()
-                songAdapter.updateTracks(tracks)
-                placeholderImage = ContextCompat.getDrawable(this@SearchActivity, R.drawable.nofound)!!
-                placeholder.setImageDrawable(placeholderImage)
-                placeholdertext.setText("Ничего не нашлось")
-                updater.isVisible = false
-                placeholder.isVisible = tracks.isEmpty()
-                placeholdertext.isVisible = tracks.isEmpty()
-                recyclerView.isVisible = tracks.isNotEmpty()
-            }
+            translationService.searchSongs(query)
+                .enqueue(object : retrofit2.Callback<TrackResponse> {
+                    override fun onResponse(
+                        call: retrofit2.Call<TrackResponse>,
+                        response: retrofit2.Response<TrackResponse>
+                    ) {
+                        progressBar.visibility = View.GONE
+                        val tracks = response.body()?.results ?: emptyList()
+                        songAdapter.updateTracks(tracks)
+                        placeholderImage =
+                            ContextCompat.getDrawable(this@SearchActivity, R.drawable.nofound)!!
+                        placeholder.setImageDrawable(placeholderImage)
+                        placeholdertext.text = "Ничего не нашлось"
+                        updater.isVisible = false
+                        placeholder.isVisible = tracks.isEmpty()
+                        placeholdertext.isVisible = tracks.isEmpty()
+                        recyclerView.isVisible = tracks.isNotEmpty()
+                    }
 
-            override fun onFailure(call: retrofit2.Call<TrackResponse>, t: Throwable) {
-                placeholder.setImageDrawable(
-                    ContextCompat.getDrawable(this@SearchActivity, R.drawable.nointernet)
-                )
-                progressBar.visibility = View.GONE
-                placeholdertext.text = "Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету"
-                placeholder.isVisible = true
-                placeholdertext.isVisible = true
-                updater.isVisible = true
-                recyclerView.isVisible = false
-            }
-        })}
+                    override fun onFailure(call: retrofit2.Call<TrackResponse>, t: Throwable) {
+                        placeholder.setImageDrawable(
+                            ContextCompat.getDrawable(this@SearchActivity, R.drawable.nointernet)
+                        )
+                        progressBar.visibility = View.GONE
+                        placeholdertext.text =
+                            "Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету"
+                        placeholder.isVisible = true
+                        placeholdertext.isVisible = true
+                        updater.isVisible = true
+                        recyclerView.isVisible = false
+                    }
+                })
+        }
     }
 
 
@@ -242,6 +236,7 @@ class SearchActivity : AppCompatActivity() {
         val view = currentFocus ?: View(this)
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
+
     private fun updateHistory() {
         val history = searchHistory.getHistory()
 
@@ -252,7 +247,8 @@ class SearchActivity : AppCompatActivity() {
             historyLayout.visibility = View.GONE
         }
     }
-    private fun clickDebounce() : Boolean {
+
+    private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
@@ -261,4 +257,9 @@ class SearchActivity : AppCompatActivity() {
         return current
     }
 
+    companion object {
+        const val KEY_SEARCH_TEXT = "saved_search_text"
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+    }
 }

@@ -14,6 +14,7 @@ class App : Application() {
         darkTheme = sharedPrefs.getBoolean(SWITCHER_KEY, false)
         switchTheme(darkTheme)
     }
+
     fun switchTheme(darkThemeEnabled: Boolean) {
         darkTheme = darkThemeEnabled
         AppCompatDelegate.setDefaultNightMode(
