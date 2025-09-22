@@ -55,6 +55,21 @@
             android:paddingEnd="@dimen/margin_icon_padding"
             android:background="@android:color/transparent"/>
     </FrameLayout>
+    <LinearLayout
+        android:id="@+id/progressBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="@dimen/progress_bar_size"
+            android:layout_height="@dimen/progress_bar_size"
+            android:layout_marginTop="140dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/blue"
+           />
+    </LinearLayout>
 <ScrollView
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
