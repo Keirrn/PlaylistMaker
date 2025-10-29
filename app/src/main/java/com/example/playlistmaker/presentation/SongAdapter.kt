@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,12 +6,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.model.Track
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.entites.Track
+import com.example.playlistmaker.domain.repositories.ImageLoadRepository
 
 class SongAdapter(
-    private val onTrackClick: (Track) -> Unit
+    private val onTrackClick: (Track) -> Unit,
+    private val imageLoader: ImageLoadRepository
 ) : RecyclerView.Adapter<SongAdapter.SongViewHolder>() {
 
     private var tracks = ArrayList<Track>()
@@ -29,7 +30,7 @@ class SongAdapter(
 
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
         val track = tracks[position]
-        holder.bind(track)
+        holder.bind(track,  imageLoader)
         holder.itemView.setOnClickListener { onTrackClick(track) }
     }
 
@@ -43,20 +44,12 @@ class SongAdapter(
         private val artist: TextView = itemView.findViewById(R.id.artistView)
         private val time: TextView = itemView.findViewById(R.id.timeView)
         private val artwork: ImageView = itemView.findViewById(R.id.cover)
-        fun bind(track: Track) {
+        fun bind(track: Track,  imageLoader: ImageLoadRepository) {
             this.track.text = track.trackName
             this.artist.text = track.artistName
-            val durationFormatted = formatMillis(track.trackTimeMillis)
-            this.time.text = durationFormatted
-            Glide.with(itemView.context)
-                .load(track.artworkUrl100)
-                .placeholder(R.drawable.placeholder)
-                .centerCrop()
-                .transform(RoundedCorners(dpToPx(2f, itemView.context)))
-                .into(artwork)
-
+            this.time.text = track.trackTime
+            imageLoader.loadImage(track.artworkUrl100, artwork)
         }
-
 
     }
 
