@@ -74,6 +74,7 @@ class SearchActivity : AppCompatActivity() {
     private fun initViews() {
         inputEditText = findViewById(R.id.search_bar)
         clearButton = findViewById(R.id.clear_button)
+        clearButton.isVisible = false
         recyclerView = findViewById(R.id.recyclerView)
         historyLayout = findViewById(R.id.history_layout)
         historyRecyclerView = findViewById(R.id.historyRecyclerView)
