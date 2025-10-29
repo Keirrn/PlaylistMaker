@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation
 
 
 import android.media.MediaPlayer
@@ -15,11 +15,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.model.Track
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.entites.Track
+import com.example.playlistmaker.domain.interactors.FormatMillisUseCase
+import com.example.playlistmaker.domain.repositories.ImageLoadRepository
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.gson.Gson
+
 
 class AudioPlayer : AppCompatActivity() {
 
@@ -28,12 +30,14 @@ class AudioPlayer : AppCompatActivity() {
     private lateinit var playButton: ImageButton
     private lateinit var mainHandler: Handler
     private lateinit var url: String
+    private lateinit var formatTimeUseCase: FormatMillisUseCase
+    private lateinit var imageLoader: ImageLoadRepository
 
     private var playerState = STATE_DEFAULT
     private val updateTimerRunnable = object : Runnable {
         override fun run() {
             if (playerState == STATE_PLAYING) {
-                timerSong.text = formatMillis(mediaPlayer.currentPosition.toLong())
+                timerSong.text = formatTimeUseCase(mediaPlayer.currentPosition.toLong())
                 mainHandler.postDelayed(this, DELAY)
             }
         }
@@ -45,6 +49,8 @@ class AudioPlayer : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_audio_player)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        formatTimeUseCase = Creator.provideFormatTimeUseCase()
+        imageLoader = Creator.provideImageLoader()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.updatePadding(
@@ -54,19 +60,14 @@ class AudioPlayer : AppCompatActivity() {
             insets
         }
 
-        val track = if (savedInstanceState != null) {
-            val trackJson = savedInstanceState.getString(TRACK_JSON_KEY)
-            Gson().fromJson(trackJson, Track::class.java)
-        } else {
-            Gson().fromJson(intent.getStringExtra(TRACK_JSON_KEY), Track::class.java)
-        }
+        val track = intent.getParcelableExtra<Track>("track")
 
 
         val backBar = findViewById<MaterialToolbar>(R.id.backbar)
         backBar.setNavigationOnClickListener {
             finish()
         }
-        url = track.previewUrl
+        url = track!!.previewUrl
         timerSong = findViewById(R.id.timer_song)
         val cover = findViewById<ImageView>(R.id.album_cover)
         val song = findViewById<TextView>(R.id.song)
@@ -85,7 +86,7 @@ class AudioPlayer : AppCompatActivity() {
         year.text = track.releaseDate?.substring(0, 4) ?: ""
         genre.text = track.primaryGenreName
         country.text = track.country
-        duration.text = formatMillis(track.trackTimeMillis)
+        duration.text = track.trackTime
         if (track.collectionName == null) {
             collection.visibility = View.GONE
             collection_nc.visibility = View.GONE
@@ -100,13 +101,11 @@ class AudioPlayer : AppCompatActivity() {
             year.visibility = View.VISIBLE
             year_nc.visibility = View.VISIBLE
         }
-
-        Glide.with(this)
-            .load(track.artworkUrl100.replaceAfterLast("/", "512x512bb.jpg"))
-            .placeholder(R.drawable.placeholder_audioplayer)
-            .centerCrop()
-            .transform(RoundedCorners(dpToPx(8f, this)))
-            .into(cover)
+        imageLoader.loadImage(
+            track.artworkUrl100.replaceAfterLast("/", "512x512bb.jpg"),
+            cover,
+            8f
+        )
 
         mediaPlayer = MediaPlayer()
         playButton = findViewById(R.id.play_btn)
@@ -177,7 +176,6 @@ class AudioPlayer : AppCompatActivity() {
 
     companion object {
         const val DEFAULT_TIME = "00:00"
-        const val TRACK_JSON_KEY = "trackJson"
         private const val DELAY = 250L
         private const val STATE_DEFAULT = 0
         private const val STATE_PREPARED = 1
