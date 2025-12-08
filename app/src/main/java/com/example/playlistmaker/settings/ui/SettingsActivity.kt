@@ -20,10 +20,19 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
 
 class SettingsActivity : AppCompatActivity() {
+    companion object {
+        private val instances = mutableListOf<SettingsActivity>()
+        fun finishAll() {
+            instances.forEach { it.finish() }
+            instances.clear()
+        }
+    }
+
     private lateinit var viewModel: SettingsViewModel
     private lateinit var binding: ActivitySettingsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        instances.add(this)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
@@ -76,7 +85,11 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.backbar.setNavigationOnClickListener {
-            finish()
+            SettingsActivity.finishAll()
         }
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        instances.remove(this)
     }
 }
