@@ -2,22 +2,27 @@ package com.example.playlistmaker.main.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.ActivityMainBinding
 import com.example.playlistmaker.media.ui.MediaActivity
 import com.example.playlistmaker.search.ui.SearchActivity
 import com.example.playlistmaker.settings.ui.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
+
+    private val viewModel: MainViewModel by viewModels()
+    private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
@@ -30,24 +35,29 @@ class MainActivity : AppCompatActivity() {
 
             insets
         }
-        val btnSearch = findViewById<Button>(R.id.search_btn)
-        btnSearch.setOnClickListener {
-            val intent = Intent(this, SearchActivity::class.java)
-            startActivity(intent)
+        viewModel.navigationEvent.observe(this) { event ->
+            when (event) {
+                is MainViewModel.NavigationEvent.OpenSearch ->
+                    startActivity(Intent(this, SearchActivity::class.java))
+
+                is MainViewModel.NavigationEvent.OpenMedia ->
+                    startActivity(Intent(this, MediaActivity::class.java))
+
+                is MainViewModel.NavigationEvent.OpenSettings ->
+                    startActivity(Intent(this, SettingsActivity::class.java))
+            }
         }
 
-
-        val btnMedia = findViewById<Button>(R.id.media_btn)
-        btnMedia.setOnClickListener {
-            val intent = Intent(this, MediaActivity::class.java)
-            startActivity(intent)
+        binding.searchBtn.setOnClickListener {
+            viewModel.onSearchClicked()
         }
 
-        val btnSetting = findViewById<Button>(R.id.settings_btn)
-        btnSetting.setOnClickListener {
-            val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
+        binding.mediaBtn.setOnClickListener {
+            viewModel.onMediaClicked()
         }
 
+        binding.settingsBtn.setOnClickListener {
+            viewModel.onSettingsClicked()
+        }
     }
 }

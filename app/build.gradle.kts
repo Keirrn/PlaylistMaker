@@ -46,6 +46,7 @@ dependencies {
     implementation("com.google.android.material:material:1.6.1")
     implementation("com.github.bumptech.glide:glide:4.14.2")
     kapt("com.github.bumptech.glide:compiler:4.14.2")
+    implementation( "androidx.activity:activity-ktx:1.6.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
