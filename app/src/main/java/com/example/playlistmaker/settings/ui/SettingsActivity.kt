@@ -7,8 +7,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.SettingsViewModelFactory
+import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.settings.domain.ThemeInteractor
 import com.example.playlistmaker.sharing.domain.NavigationRepository
 import com.google.android.material.appbar.MaterialToolbar
@@ -16,12 +20,13 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
 
 class SettingsActivity : AppCompatActivity() {
-    private lateinit var themeInteractor: ThemeInteractor
-    private lateinit var navigationUseCase: NavigationRepository
+    private lateinit var viewModel: SettingsViewModel
+    private lateinit var binding: ActivitySettingsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_settings)
+        setContentView(binding.root)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { view, insets ->
@@ -33,40 +38,45 @@ class SettingsActivity : AppCompatActivity() {
 
             insets
         }
-        themeInteractor = Creator.provideThemeInteractor(this)
-        navigationUseCase = Creator.provideNavigationUseCase(this)
+        val factory = SettingsViewModelFactory(
+            Creator.provideThemeInteractor(this),
+            Creator.provideNavigationUseCase(this)
+        )
+
+        viewModel = ViewModelProvider(this, factory)[SettingsViewModel::class.java]
+
         setupButtons()
         setupThemeSwitcher()
     }
 
     private fun setupThemeSwitcher() {
-        val themeSwitcherView = findViewById<SwitchMaterial>(R.id.themeSwitcher)
-        val isDarkTheme = themeInteractor.getTheme()
-        themeSwitcherView.isChecked = isDarkTheme
+        val switcher = binding.themeSwitcher
 
-        themeSwitcherView.setOnCheckedChangeListener { _, checked ->
-            themeInteractor.saveAndApplyTheme(checked)
+        viewModel.isDarkTheme.observe(this) { isDark ->
+            switcher.isChecked = isDark
+        }
+
+        switcher.setOnCheckedChangeListener { _, checked ->
+            viewModel.onThemeSwitched(checked)
         }
     }
 
+
     private fun setupButtons() {
-        val shareButton = findViewById<MaterialTextView>(R.id.shareButton)
-        val agreementButton = findViewById<MaterialTextView>(R.id.agreementButton)
-        val supportButton = findViewById<MaterialTextView>(R.id.supportButton)
-        val backBar = findViewById<MaterialToolbar>(R.id.backbar)
-        backBar.setNavigationOnClickListener {
+        binding.shareButton.setOnClickListener {
+            viewModel.onShareClicked()
+        }
+
+        binding.agreementButton.setOnClickListener {
+            viewModel.onAgreementClicked()
+        }
+
+        binding.supportButton.setOnClickListener {
+            viewModel.onSupportClicked()
+        }
+
+        binding.backbar.setNavigationOnClickListener {
             finish()
-        }
-        shareButton.setOnClickListener {
-            navigationUseCase.shareApp()
-        }
-
-        agreementButton.setOnClickListener {
-            navigationUseCase.openAgreement()
-        }
-
-        supportButton.setOnClickListener {
-            navigationUseCase.contactSupport()
         }
     }
 }

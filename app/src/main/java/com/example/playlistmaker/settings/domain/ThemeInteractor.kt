@@ -1,8 +1,6 @@
 package com.example.playlistmaker.settings.domain
 
-import com.example.playlistmaker.settings.domain.ThemeRepository
-
-class ThemeInteractor(
+class ThemeInteractor (
     private val themeRepository: ThemeRepository,
     private val themeSwitcher: ThemeSwitcher
 ) {
