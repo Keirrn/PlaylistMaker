@@ -1,4 +1,4 @@
-package com.example.playlistmaker.search.domain
+package com.example.playlistmaker.player.domain
 
 class FormatMillisUseCase {
     operator fun invoke(milliseconds: Long): String {

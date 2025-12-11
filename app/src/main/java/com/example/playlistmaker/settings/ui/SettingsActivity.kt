@@ -8,16 +8,9 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.SettingsViewModelFactory
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
-import com.example.playlistmaker.settings.domain.ThemeInteractor
-import com.example.playlistmaker.sharing.domain.NavigationRepository
-import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.switchmaterial.SwitchMaterial
-import com.google.android.material.textview.MaterialTextView
 
 class SettingsActivity : AppCompatActivity() {
     companion object {
@@ -47,12 +40,14 @@ class SettingsActivity : AppCompatActivity() {
 
             insets
         }
-        val factory = SettingsViewModelFactory(
-            Creator.provideThemeInteractor(this),
-            Creator.provideNavigationUseCase(this)
-        )
 
-        viewModel = ViewModelProvider(this, factory)[SettingsViewModel::class.java]
+        viewModel = ViewModelProvider(
+            this, SettingsViewModel.getFactory(
+                Creator.provideThemeInteractor(this),
+                Creator.provideNavigationUseCase(this)
+            )
+        )
+            .get(SettingsViewModel::class.java)
 
         setupButtons()
         setupThemeSwitcher()
@@ -85,9 +80,10 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.backbar.setNavigationOnClickListener {
-            SettingsActivity.finishAll()
+            finishAll()
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         instances.remove(this)

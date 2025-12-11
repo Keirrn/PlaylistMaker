@@ -2,13 +2,13 @@ package com.example.playlistmaker.creator
 
 import android.content.Context
 import com.example.playlistmaker.search.data.HistoryManagerImpl
-import com.example.playlistmaker.search.data.ImageLoadRepositoryImpl
+import com.example.playlistmaker.player.data.ImageLoadRepositoryImpl
 import com.example.playlistmaker.search.data.RetrofitNetworkClient
 import com.example.playlistmaker.search.data.TrackInteractorImpl
 import com.example.playlistmaker.search.data.TrackRepositoryImpl
-import com.example.playlistmaker.search.domain.FormatMillisUseCase
+import com.example.playlistmaker.player.domain.FormatMillisUseCase
 import com.example.playlistmaker.search.domain.HistoryManagerRepository
-import com.example.playlistmaker.search.domain.ImageLoadRepository
+import com.example.playlistmaker.player.domain.ImageLoadRepository
 import com.example.playlistmaker.search.domain.TrackInteractor
 import com.example.playlistmaker.search.domain.TrackRepository
 import com.example.playlistmaker.settings.data.ThemeRepositoryImpl

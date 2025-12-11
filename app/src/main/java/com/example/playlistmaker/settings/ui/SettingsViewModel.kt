@@ -3,10 +3,11 @@ package com.example.playlistmaker.settings.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.settings.domain.ThemeInteractor
 import com.example.playlistmaker.sharing.domain.NavigationRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 class SettingsViewModel(
     private val themeInteractor: ThemeInteractor,
@@ -31,5 +32,16 @@ class SettingsViewModel(
 
     fun onSupportClicked() {
         navigationRepository.contactSupport()
+    }
+
+    companion object {
+        fun getFactory(
+            themeInteractor: ThemeInteractor,
+            navigationRepository: NavigationRepository
+        ): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                SettingsViewModel(themeInteractor, navigationRepository)
+            }
+        }
     }
 }
