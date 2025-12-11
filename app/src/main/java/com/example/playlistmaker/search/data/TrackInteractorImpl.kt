@@ -10,7 +10,8 @@ class TrackInteractorImpl(private val repository: TrackRepository) : TrackIntera
 
     override fun searchTrack(term: String, consumer: TrackInteractor.TrackConsumer) {
         executor.execute {
-            consumer.consume(repository.searchTracks(term))
+            val result = repository.searchTracks(term)
+            consumer.consume(result.tracks, result.errorMessage)
         }
     }
 }

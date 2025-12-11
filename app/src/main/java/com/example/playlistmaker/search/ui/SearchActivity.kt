@@ -16,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -29,7 +30,6 @@ import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.domain.TrackInteractor
 import com.example.playlistmaker.search.domain.HistoryManagerRepository
 import com.example.playlistmaker.player.ui.AudioPlayer
-import com.example.playlistmaker.player.ui.SongAdapter
 import com.google.android.material.appbar.MaterialToolbar
 
 class SearchActivity : AppCompatActivity() {
@@ -156,24 +156,48 @@ class SearchActivity : AppCompatActivity() {
         progressBar.isVisible = true
 
         trackInteractor.searchTrack(query, object : TrackInteractor.TrackConsumer {
-            override fun consume(foundTracks: List<Track>) {
+            override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
                 runOnUiThread {
                     progressBar.isVisible = false
-                    if (foundTracks.isNotEmpty()) {
-                        songAdapter.updateTracks(foundTracks)
-                        recyclerView.isVisible = true
-                        placeholder.isVisible = false
-                        placeholderText.isVisible = false
-                        updater.isVisible = false
-                    } else {
-                        recyclerView.isVisible = false
-                        placeholder.isVisible = true
-                        placeholderText.isVisible = true
-                        placeholderText.text = "Ничего не нашлось"
-                        updater.isVisible = false
+                    when{
+                        foundTracks.isNullOrEmpty() -> {
+                            if (errorMessage =="Что-то пошло не так") {
+                                recyclerView.isVisible = false
+                                placeholder.isVisible = true
+                                placeholderText.isVisible = true
+                                val placeholderImage = ContextCompat.getDrawable(
+                                    this@SearchActivity,
+                                    R.drawable.nofound
+                                )
+                                placeholder.setImageDrawable(placeholderImage)
+                                placeholderText.text = errorMessage
+                                updater.isVisible = false
+                            }
+                            else{
+                                placeholder.setImageDrawable(
+                                    ContextCompat.getDrawable(this@SearchActivity, R.drawable.nointernet)
+                                )
+                                progressBar.visibility = View.GONE
+                                placeholderText.text = errorMessage
+                                placeholder.isVisible = true
+                                placeholderText.isVisible = true
+                                updater.isVisible = true
+                                recyclerView.isVisible = false
+                            }
+                        }
+                        else ->{
+                            songAdapter.updateTracks(foundTracks)
+                            recyclerView.isVisible = true
+                            placeholder.isVisible = false
+                            placeholderText.isVisible = false
+                            updater.isVisible = false
+                        }
                     }
-                }
-            }
+
+
+                        }
+                    }
+
         })
     }
 
