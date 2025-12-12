@@ -1,55 +1,43 @@
 package com.example.playlistmaker.player.ui
 
-import android.media.MediaPlayer
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.view.View
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.example.playlistmaker.player.domain.ImageLoadRepository
 import com.example.playlistmaker.search.domain.Track
-import com.example.playlistmaker.search.domain.FormatMillisUseCase
-import com.example.playlistmaker.search.domain.ImageLoadRepository
-import com.google.android.material.appbar.MaterialToolbar
 
 class AudioPlayer : AppCompatActivity() {
 
-    private lateinit var timerSong: TextView
-    private lateinit var mediaPlayer: MediaPlayer
-    private lateinit var playButton: ImageButton
-    private lateinit var mainHandler: Handler
-    private lateinit var url: String
-    private lateinit var formatTimeUseCase: FormatMillisUseCase
+    private lateinit var binding: ActivityAudioPlayerBinding
     private lateinit var imageLoader: ImageLoadRepository
 
-    private var playerState = STATE_DEFAULT
-    private val updateTimerRunnable = object : Runnable {
-        override fun run() {
-            if (playerState == STATE_PLAYING) {
-                timerSong.text = formatTimeUseCase(mediaPlayer.currentPosition.toLong())
-                mainHandler.postDelayed(this, DELAY)
-            }
-        }
+    private val viewModel: AudioPlayerViewModel by viewModels {
+        AudioPlayerViewModel.getFactory(
+            trackUrl = track?.previewUrl ?: "",
+            formatTimeUseCase = Creator.provideFormatTimeUseCase()
+        )
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    private lateinit var track: Track
 
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         enableEdgeToEdge()
-        setContentView(R.layout.activity_audio_player)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        formatTimeUseCase = Creator.provideFormatTimeUseCase()
+
         imageLoader = Creator.provideImageLoader()
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { view, insets ->
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.updatePadding(
                 top = systemBars.top,
@@ -58,126 +46,84 @@ class AudioPlayer : AppCompatActivity() {
             insets
         }
 
-        val track = intent.getParcelableExtra<Track>("track")
-
-
-        val backBar = findViewById<MaterialToolbar>(R.id.backbar)
-        backBar.setNavigationOnClickListener {
+        track = intent.getParcelableExtra<Track>("track")!!
+        binding.backbar.setNavigationOnClickListener {
             finish()
         }
-        url = track!!.previewUrl
-        timerSong = findViewById(R.id.timer_song)
-        val cover = findViewById<ImageView>(R.id.album_cover)
-        val song = findViewById<TextView>(R.id.song)
-        val singer = findViewById<TextView>(R.id.singer)
-        val collection = findViewById<TextView>(R.id.collection_name)
-        val collection_nc = findViewById<TextView>(R.id.collection)
-        val year_nc = findViewById<TextView>(R.id.year)
-        val year = findViewById<TextView>(R.id.track_year)
-        val genre = findViewById<TextView>(R.id.track_genre)
-        val country = findViewById<TextView>(R.id.track_country)
-        val duration = findViewById<TextView>(R.id.full_time)
 
-        song.text = track.trackName
-        singer.text = track.artistName
-        collection.text = track.collectionName ?: ""
-        year.text = track.releaseDate?.substring(0, 4) ?: ""
-        genre.text = track.primaryGenreName
-        country.text = track.country
-        duration.text = track.trackTime
+        binding.song.text = track.trackName
+        binding.singer.text = track.artistName
+        binding.collectionName.text = track.collectionName ?: ""
+        binding.trackYear.text = track.releaseDate?.substring(0, 4) ?: ""
+        binding.trackGenre.text = track.primaryGenreName
+        binding.trackCountry.text = track.country
+        binding.fullTime.text = track.trackTime
+
         if (track.collectionName == null) {
-            collection.visibility = View.GONE
-            collection_nc.visibility = View.GONE
+            binding.collectionName.visibility = android.view.View.GONE
+            binding.collection.visibility = android.view.View.GONE
         } else {
-            collection.visibility = View.VISIBLE
-            collection_nc.visibility = View.VISIBLE
+            binding.collectionName.visibility = android.view.View.VISIBLE
+            binding.collection.visibility = android.view.View.VISIBLE
         }
+
         if (track.releaseDate == null) {
-            year.visibility = View.GONE
-            year_nc.visibility = View.GONE
+            binding.trackYear.visibility = android.view.View.GONE
+            binding.year.visibility = android.view.View.GONE
         } else {
-            year.visibility = View.VISIBLE
-            year_nc.visibility = View.VISIBLE
+            binding.trackYear.visibility = android.view.View.VISIBLE
+            binding.year.visibility = android.view.View.VISIBLE
         }
+
         imageLoader.loadImage(
             track.artworkUrl100.replaceAfterLast("/", "512x512bb.jpg"),
-            cover,
+            binding.albumCover,
             8f
         )
 
-        mediaPlayer = MediaPlayer()
-        playButton = findViewById(R.id.play_btn)
-        playButton.isEnabled = false
-        preparePlayer()
-        playButton.setOnClickListener {
-            playbackControl()
+        binding.playBtn.isEnabled = false
+
+        viewModel.observePlayerState().observe(this) { state ->
+            updatePlayButtonState(state)
         }
 
-        mainHandler = Handler(Looper.getMainLooper())
-
-    }
-
-
-    private fun preparePlayer() {
-        mediaPlayer.setDataSource(url)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            playButton.isEnabled = true
-            playerState = STATE_PREPARED
+        viewModel.observeProgressTime().observe(this) { time ->
+            binding.timerSong.text = time
         }
-        mediaPlayer.setOnCompletionListener {
-            playButton.setImageResource(R.drawable.play_song_ic)
-            mainHandler.removeCallbacks(updateTimerRunnable)
-            timerSong.text = DEFAULT_TIME
-            playerState = STATE_PREPARED
+
+        binding.playBtn.setOnClickListener {
+            viewModel.onPlayButtonClicked()
         }
     }
-
-    private fun startPlayer() {
-        mediaPlayer.start()
-        playButton.setImageResource(R.drawable.stop_song_ic)
-        mainHandler.postDelayed(updateTimerRunnable, DELAY)
-        playerState = STATE_PLAYING
-    }
-
-    private fun pausePlayer() {
-        mediaPlayer.pause()
-        playButton.setImageResource(R.drawable.play_song_ic)
-        mainHandler.removeCallbacks(updateTimerRunnable)
-        playerState = STATE_PAUSED
-    }
-
-    private fun playbackControl() {
-        when (playerState) {
-            STATE_PLAYING -> {
-                pausePlayer()
-            }
-
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
-            }
-        }
-    }
-
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
+        viewModel.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mainHandler.removeCallbacks(updateTimerRunnable)
-        mediaPlayer.release()
+    private fun updatePlayButtonState(state: Int) {
+        when (state) {
+            AudioPlayerViewModel.STATE_DEFAULT -> {
+                binding.playBtn.isEnabled = false
+                binding.playBtn.setImageResource(com.example.playlistmaker.R.drawable.play_song_ic)
+            }
+            AudioPlayerViewModel.STATE_PREPARED -> {
+                binding.playBtn.isEnabled = true
+                binding.playBtn.setImageResource(com.example.playlistmaker.R.drawable.play_song_ic)
+            }
+            AudioPlayerViewModel.STATE_PLAYING -> {
+                binding.playBtn.isEnabled = true
+                binding.playBtn.setImageResource(com.example.playlistmaker.R.drawable.stop_song_ic)
+            }
+            AudioPlayerViewModel.STATE_PAUSED -> {
+                binding.playBtn.isEnabled = true
+                binding.playBtn.setImageResource(com.example.playlistmaker.R.drawable.play_song_ic)
+            }
+        }
     }
-
 
     companion object {
         const val DEFAULT_TIME = "00:00"
         private const val DELAY = 250L
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
     }
 }
