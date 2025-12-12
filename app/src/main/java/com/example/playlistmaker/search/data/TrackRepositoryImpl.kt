@@ -40,7 +40,7 @@ class TrackRepositoryImpl(
             }
 
             else -> {
-                SearchResult(emptyList(), "Что-то пошло не так")
+                SearchResult(emptyList(), "Ничего не нашлось")
             }
         }
     }
