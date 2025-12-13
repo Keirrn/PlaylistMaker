@@ -18,23 +18,10 @@ class AudioPlayerViewModel(
     private val formatTimeUseCase: FormatMillisUseCase
 ) : ViewModel() {
 
-    companion object {
-        const val STATE_DEFAULT = 0
-        const val STATE_PREPARED = 1
-        const val STATE_PLAYING = 2
-        const val STATE_PAUSED = 3
-
-        fun getFactory(trackUrl: String, formatTimeUseCase: FormatMillisUseCase): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                AudioPlayerViewModel(trackUrl, formatTimeUseCase)
-            }
-        }
-    }
-
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
     fun observePlayerState(): LiveData<Int> = playerStateLiveData
 
-    private val progressTimeLiveData = MutableLiveData("00:00")
+    private val progressTimeLiveData = MutableLiveData(START_VALUE)
     fun observeProgressTime(): LiveData<String> = progressTimeLiveData
 
     private val mediaPlayer = MediaPlayer()
@@ -43,7 +30,7 @@ class AudioPlayerViewModel(
         override fun run() {
             if (playerStateLiveData.value == STATE_PLAYING) {
                 updateTimer()
-                handler.postDelayed(this, 250L)
+                handler.postDelayed(this, DELAY)
             }
         }
     }
@@ -85,7 +72,7 @@ class AudioPlayerViewModel(
         mediaPlayer.start()
         playerStateLiveData.postValue(STATE_PLAYING)
         updateTimer()
-        handler.postDelayed(updateTimerRunnable, 250L)
+        handler.postDelayed(updateTimerRunnable, DELAY)
     }
 
     private fun pausePlayer() {
@@ -103,6 +90,23 @@ class AudioPlayerViewModel(
 
     private fun resetTimer() {
         handler.removeCallbacks(updateTimerRunnable)
-        progressTimeLiveData.postValue("00:00")
+        progressTimeLiveData.postValue(START_VALUE)
+    }
+
+    companion object {
+        const val STATE_DEFAULT = 0
+        const val STATE_PREPARED = 1
+        const val STATE_PLAYING = 2
+        const val STATE_PAUSED = 3
+        const val  DELAY = 250L
+        const val START_VALUE = "00:00"
+        fun getFactory(
+            trackUrl: String,
+            formatTimeUseCase: FormatMillisUseCase
+        ): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                AudioPlayerViewModel(trackUrl, formatTimeUseCase)
+            }
+        }
     }
 }

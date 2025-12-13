@@ -9,6 +9,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.creator.TRACK
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import com.example.playlistmaker.player.domain.ImageLoadRepository
 import com.example.playlistmaker.search.domain.Track
@@ -46,7 +47,7 @@ class AudioPlayer : AppCompatActivity() {
             insets
         }
 
-        track = intent.getParcelableExtra<Track>("track")!!
+        track = intent.getParcelableExtra<Track>(TRACK)!!
         binding.backbar.setNavigationOnClickListener {
             finish()
         }
@@ -122,8 +123,5 @@ class AudioPlayer : AppCompatActivity() {
         }
     }
 
-    companion object {
-        const val DEFAULT_TIME = "00:00"
-        private const val DELAY = 250L
-    }
+
 }

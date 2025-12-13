@@ -9,11 +9,13 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.creator.TRACK
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.player.ui.AudioPlayer
 import com.example.playlistmaker.search.domain.Track
@@ -99,16 +101,10 @@ class SearchActivity : AppCompatActivity() {
             viewModel.refreshSearch()
         }
 
-        binding.searchBar.addTextChangedListener(object : android.text.TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val query = s?.toString() ?: ""
-                viewModel.onTextChanged(query)
-            }
-
-            override fun afterTextChanged(s: android.text.Editable?) {}
-        })
+        binding.searchBar.doOnTextChanged { text, _, _, _ ->
+            val query = text?.toString() ?: ""
+            viewModel.onTextChanged(query)
+        }
     }
 
     private fun setupObservers() {
@@ -213,12 +209,8 @@ class SearchActivity : AppCompatActivity() {
     private fun onTrackClicked(track: Track) {
         if (viewModel.onTrackClicked(track)) {
             val intent = Intent(this, AudioPlayer::class.java)
-            intent.putExtra("track", track)
+            intent.putExtra(TRACK, track)
             startActivity(intent)
         }
-    }
-
-    companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

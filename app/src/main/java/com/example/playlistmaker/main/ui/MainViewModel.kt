@@ -5,16 +5,17 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.playlistmaker.creator.SingleLiveEvent
 import com.example.playlistmaker.search.ui.SearchActivity
 
 class MainViewModel : ViewModel() {
-    sealed class NavigationEvent {
-        object OpenSearch : NavigationEvent()
-        object OpenMedia : NavigationEvent()
-        object OpenSettings : NavigationEvent()
+    sealed interface NavigationEvent {
+        object OpenSearch : NavigationEvent
+        object OpenMedia : NavigationEvent
+        object OpenSettings : NavigationEvent
     }
 
-    private val _navigationEvent = MutableLiveData<NavigationEvent>()
+    private val _navigationEvent = SingleLiveEvent<NavigationEvent>()
     val navigationEvent: LiveData<NavigationEvent> = _navigationEvent
 
     fun onSearchClicked() {
