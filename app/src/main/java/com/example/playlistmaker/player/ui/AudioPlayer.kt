@@ -14,18 +14,16 @@ import com.example.playlistmaker.player.domain.FormatMillisUseCase
 import com.example.playlistmaker.player.domain.ImageLoadRepository
 import com.example.playlistmaker.search.domain.Track
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class AudioPlayer : AppCompatActivity() {
 
     private lateinit var binding: ActivityAudioPlayerBinding
     private lateinit var imageLoader: ImageLoadRepository
-    private val formatTimeUseCase : FormatMillisUseCase by inject()
     private val imageLoadRepository : ImageLoadRepository by inject ()
-    private val viewModel: AudioPlayerViewModel by viewModels {
-        AudioPlayerViewModel.getFactory(
-            trackUrl = track?.previewUrl ?: "",
-            formatTimeUseCase = formatTimeUseCase
-        )
+    private val viewModel: AudioPlayerViewModel by viewModel{
+        parametersOf( track?.previewUrl ?: "")
     }
 
     private lateinit var track: Track

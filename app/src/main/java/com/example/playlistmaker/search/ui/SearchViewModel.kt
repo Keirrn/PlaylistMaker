@@ -20,11 +20,6 @@ class SearchViewModel(
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private const val CLICK_DEBOUNCE_DELAY = 1000L
-        fun getFactory(trackInteractor: TrackInteractor, historyRepository: HistoryManagerRepository): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SearchViewModel(trackInteractor, historyRepository)
-            }
-        }
     }
 
     private val handler = Handler(Looper.getMainLooper())

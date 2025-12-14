@@ -100,13 +100,6 @@ class AudioPlayerViewModel(
         const val STATE_PAUSED = 3
         const val  DELAY = 250L
         const val START_VALUE = "00:00"
-        fun getFactory(
-            trackUrl: String,
-            formatTimeUseCase: FormatMillisUseCase
-        ): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                AudioPlayerViewModel(trackUrl, formatTimeUseCase)
-            }
-        }
+
     }
 }
