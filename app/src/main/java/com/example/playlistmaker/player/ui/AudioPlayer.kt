@@ -8,21 +8,23 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.creator.TRACK
+import com.example.playlistmaker.utill.TRACK
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.example.playlistmaker.player.domain.FormatMillisUseCase
 import com.example.playlistmaker.player.domain.ImageLoadRepository
 import com.example.playlistmaker.search.domain.Track
+import org.koin.android.ext.android.inject
 
 class AudioPlayer : AppCompatActivity() {
 
     private lateinit var binding: ActivityAudioPlayerBinding
     private lateinit var imageLoader: ImageLoadRepository
-
+    private val formatTimeUseCase : FormatMillisUseCase by inject()
+    private val imageLoadRepository : ImageLoadRepository by inject ()
     private val viewModel: AudioPlayerViewModel by viewModels {
         AudioPlayerViewModel.getFactory(
             trackUrl = track?.previewUrl ?: "",
-            formatTimeUseCase = Creator.provideFormatTimeUseCase()
+            formatTimeUseCase = formatTimeUseCase
         )
     }
 
@@ -36,7 +38,7 @@ class AudioPlayer : AppCompatActivity() {
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        imageLoader = Creator.provideImageLoader()
+        imageLoader = imageLoadRepository
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

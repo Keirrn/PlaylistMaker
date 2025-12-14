@@ -1,4 +1,4 @@
-package com.example.playlistmaker.creator
+package com.example.playlistmaker.utill
 
 const val SWITCHER_KEY = "key_for_switcher"
 const val PLAYLISTMAKER_PREFERENCES = "playlistmaker_preferences"

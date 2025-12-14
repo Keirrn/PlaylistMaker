@@ -7,21 +7,17 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
+import org.koin.android.ext.android.inject
 
 class SettingsActivity : AppCompatActivity() {
     companion object {
         private val instances = mutableListOf<SettingsActivity>()
-        fun finishAll() {
-            instances.forEach { it.finish() }
-            instances.clear()
-        }
+
     }
 
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel: SettingsViewModel by inject()
     private lateinit var binding: ActivitySettingsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,14 +36,6 @@ class SettingsActivity : AppCompatActivity() {
 
             insets
         }
-
-        viewModel = ViewModelProvider(
-            this, SettingsViewModel.getFactory(
-                Creator.provideThemeInteractor(this),
-                Creator.provideNavigationUseCase(this)
-            )
-        )
-            .get(SettingsViewModel::class.java)
 
         setupButtons()
         setupThemeSwitcher()
@@ -80,12 +68,9 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.backbar.setNavigationOnClickListener {
-            finishAll()
+            finish()
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        instances.remove(this)
-    }
+
 }

@@ -1,44 +1,16 @@
 package com.example.playlistmaker.search.ui
 
-import android.content.Context.INPUT_METHOD_SERVICE
-import android.content.Intent
-import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.player.domain.FormatMillisUseCase
-import com.example.playlistmaker.player.ui.AudioPlayer
-import com.example.playlistmaker.player.ui.AudioPlayerViewModel
 import com.example.playlistmaker.search.domain.HistoryManagerRepository
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.domain.TrackInteractor
-import com.google.android.material.appbar.MaterialToolbar
 
 class SearchViewModel(
     private val trackInteractor: TrackInteractor,
