@@ -20,7 +20,6 @@ import org.koin.core.parameter.parametersOf
 class AudioPlayer : AppCompatActivity() {
 
     private lateinit var binding: ActivityAudioPlayerBinding
-    private lateinit var imageLoader: ImageLoadRepository
     private val imageLoadRepository : ImageLoadRepository by inject ()
     private val viewModel: AudioPlayerViewModel by viewModel{
         parametersOf( track?.previewUrl ?: "")
@@ -36,7 +35,6 @@ class AudioPlayer : AppCompatActivity() {
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        imageLoader = imageLoadRepository
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -76,7 +74,7 @@ class AudioPlayer : AppCompatActivity() {
             binding.year.visibility = android.view.View.VISIBLE
         }
 
-        imageLoader.loadImage(
+        imageLoadRepository.loadImage(
             track.artworkUrl100.replaceAfterLast("/", "512x512bb.jpg"),
             binding.albumCover,
             8f

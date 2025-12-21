@@ -25,7 +25,7 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
     private val viewModel: SearchViewModel by viewModel()
-    private val imageLoader: ImageLoadRepository by inject()
+
     private lateinit var songAdapter: SongAdapter
     private lateinit var historyAdapter: SongAdapter
 
@@ -64,17 +64,18 @@ class SearchActivity : AppCompatActivity() {
     private fun setupRecyclerViews() {
         songAdapter = SongAdapter(
             onTrackClick = { track -> onTrackClicked(track) },
-            imageLoader = imageLoader
+            onLoadImage = viewModel::loadImage
+        )
+
+        historyAdapter = SongAdapter(
+            onTrackClick = { track -> onTrackClicked(track) },
+            onLoadImage = viewModel::loadImage
         )
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(this@SearchActivity)
             adapter = songAdapter
         }
 
-        historyAdapter = SongAdapter(
-            onTrackClick = { track -> onTrackClicked(track) },
-            imageLoader = imageLoader
-        )
         binding.historyRecyclerView.apply {
             layoutManager = LinearLayoutManager(this@SearchActivity)
             adapter = historyAdapter

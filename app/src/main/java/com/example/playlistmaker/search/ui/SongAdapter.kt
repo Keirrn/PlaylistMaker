@@ -12,7 +12,7 @@ import com.example.playlistmaker.search.domain.Track
 
 class SongAdapter(
     private val onTrackClick: (Track) -> Unit,
-    private val imageLoader: ImageLoadRepository
+    private val onLoadImage: (String, ImageView) -> Unit
 ) : RecyclerView.Adapter<SongAdapter.SongViewHolder>() {
 
     private var tracks = ArrayList<Track>()
@@ -30,7 +30,7 @@ class SongAdapter(
 
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
         val track = tracks[position]
-        holder.bind(track,  imageLoader)
+        holder.bind(track,  onLoadImage)
         holder.itemView.setOnClickListener { onTrackClick(track) }
     }
 
@@ -44,11 +44,15 @@ class SongAdapter(
         private val artist: TextView = itemView.findViewById(R.id.artistView)
         private val time: TextView = itemView.findViewById(R.id.timeView)
         private val artwork: ImageView = itemView.findViewById(R.id.cover)
-        fun bind(track: Track, imageLoader: ImageLoadRepository) {
+        fun bind(
+            track: Track,
+            onLoadImage: (String, ImageView) -> Unit
+        ) {
             this.track.text = track.trackName
             this.artist.text = track.artistName
             this.time.text = track.trackTime
-            imageLoader.loadImage(track.artworkUrl100, artwork)
+
+            onLoadImage(track.artworkUrl100, artwork)
         }
 
     }

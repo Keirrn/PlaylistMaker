@@ -1,6 +1,8 @@
 package com.example.playlistmaker.di
 
 import android.content.Context
+import com.example.playlistmaker.player.data.ImageLoadRepositoryImpl
+import com.example.playlistmaker.player.domain.ImageLoadRepository
 import com.example.playlistmaker.search.data.HistoryManagerImpl
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.RetrofitNetworkClient
@@ -30,7 +32,9 @@ val dataModule = module {
     single<NetworkClient> {
         RetrofitNetworkClient()
     }
-
+    single<ImageLoadRepository> {
+        ImageLoadRepositoryImpl()
+    }
     single<HistoryManagerRepository> {
         HistoryManagerImpl(get())
     }

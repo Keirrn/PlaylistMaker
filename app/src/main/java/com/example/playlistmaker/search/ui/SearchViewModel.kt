@@ -2,26 +2,31 @@ package com.example.playlistmaker.search.ui
 
 import android.os.Handler
 import android.os.Looper
+import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.playlistmaker.player.domain.ImageLoadRepository
 import com.example.playlistmaker.search.domain.HistoryManagerRepository
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.domain.TrackInteractor
 
 class SearchViewModel(
     private val trackInteractor: TrackInteractor,
-    private val historyRepository: HistoryManagerRepository
+    private val historyRepository: HistoryManagerRepository,
+    private val imageLoader: ImageLoadRepository
 ) : ViewModel() {
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
-
+    fun loadImage(url: String, imageView: ImageView) {
+        imageLoader.loadImage(url, imageView, 8f)
+    }
     private val handler = Handler(Looper.getMainLooper())
     private var currentQuery = ""
     private val searchRunnable = Runnable { searchTracks(currentQuery) }
@@ -36,7 +41,7 @@ class SearchViewModel(
     private val _clearButtonVisible = MutableLiveData<Boolean>(false)
     val clearButtonVisible: LiveData<Boolean> = _clearButtonVisible
 
-     fun onTextChanged(text: String) {
+    fun onTextChanged(text: String) {
         currentQuery = text
         _clearButtonVisible.postValue( text.isNotEmpty())
 
