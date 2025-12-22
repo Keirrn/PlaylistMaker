@@ -8,22 +8,21 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.creator.TRACK
+import com.example.playlistmaker.utill.TRACK
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.example.playlistmaker.player.domain.FormatMillisUseCase
 import com.example.playlistmaker.player.domain.ImageLoadRepository
 import com.example.playlistmaker.search.domain.Track
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class AudioPlayer : AppCompatActivity() {
 
     private lateinit var binding: ActivityAudioPlayerBinding
-    private lateinit var imageLoader: ImageLoadRepository
-
-    private val viewModel: AudioPlayerViewModel by viewModels {
-        AudioPlayerViewModel.getFactory(
-            trackUrl = track?.previewUrl ?: "",
-            formatTimeUseCase = Creator.provideFormatTimeUseCase()
-        )
+    private val imageLoadRepository : ImageLoadRepository by inject ()
+    private val viewModel: AudioPlayerViewModel by viewModel{
+        parametersOf( track?.previewUrl ?: "")
     }
 
     private lateinit var track: Track
@@ -36,7 +35,6 @@ class AudioPlayer : AppCompatActivity() {
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        imageLoader = Creator.provideImageLoader()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -76,7 +74,7 @@ class AudioPlayer : AppCompatActivity() {
             binding.year.visibility = android.view.View.VISIBLE
         }
 
-        imageLoader.loadImage(
+        imageLoadRepository.loadImage(
             track.artworkUrl100.replaceAfterLast("/", "512x512bb.jpg"),
             binding.albumCover,
             8f

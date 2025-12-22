@@ -1,6 +1,6 @@
 package com.example.playlistmaker.search.data
 
-import com.example.playlistmaker.creator.BASE_URL
+import com.example.playlistmaker.utill.BASE_URL
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException

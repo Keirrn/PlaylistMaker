@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.material.v161)
     implementation(libs.glide)
     kapt(libs.compiler)
+    implementation(libs.koin.android)
     implementation( libs.androidx.activity.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.core.ktx)

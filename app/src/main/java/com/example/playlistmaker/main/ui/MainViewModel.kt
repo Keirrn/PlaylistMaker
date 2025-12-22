@@ -1,12 +1,8 @@
 package com.example.playlistmaker.main.ui
 
-import android.content.Intent
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.playlistmaker.creator.SingleLiveEvent
-import com.example.playlistmaker.search.ui.SearchActivity
+import com.example.playlistmaker.utill.SingleLiveEvent
 
 class MainViewModel : ViewModel() {
     sealed interface NavigationEvent {

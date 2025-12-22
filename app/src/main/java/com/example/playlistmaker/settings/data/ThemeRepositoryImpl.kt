@@ -1,7 +1,7 @@
 package com.example.playlistmaker.settings.data
 
 import android.content.SharedPreferences
-import com.example.playlistmaker.creator.SWITCHER_KEY
+import com.example.playlistmaker.utill.SWITCHER_KEY
 import com.example.playlistmaker.settings.domain.ThemeRepository
 
 class ThemeRepositoryImpl(

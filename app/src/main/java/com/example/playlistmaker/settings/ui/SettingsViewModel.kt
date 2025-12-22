@@ -34,14 +34,4 @@ class SettingsViewModel(
         navigationRepository.contactSupport()
     }
 
-    companion object {
-        fun getFactory(
-            themeInteractor: ThemeInteractor,
-            navigationRepository: NavigationRepository
-        ): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SettingsViewModel(themeInteractor, navigationRepository)
-            }
-        }
-    }
 }

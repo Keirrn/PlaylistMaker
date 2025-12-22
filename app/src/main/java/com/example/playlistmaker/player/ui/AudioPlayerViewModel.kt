@@ -15,7 +15,9 @@ import kotlinx.coroutines.launch
 
 class AudioPlayerViewModel(
     private val url: String,
-    private val formatTimeUseCase: FormatMillisUseCase
+    private val formatTimeUseCase: FormatMillisUseCase,
+    private val mediaPlayer: MediaPlayer,
+    private val handler: android.os.Handler
 ) : ViewModel() {
 
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
@@ -24,8 +26,6 @@ class AudioPlayerViewModel(
     private val progressTimeLiveData = MutableLiveData(START_VALUE)
     fun observeProgressTime(): LiveData<String> = progressTimeLiveData
 
-    private val mediaPlayer = MediaPlayer()
-    private val handler = android.os.Handler(Looper.getMainLooper())
     private val updateTimerRunnable = object : Runnable {
         override fun run() {
             if (playerStateLiveData.value == STATE_PLAYING) {
@@ -100,13 +100,6 @@ class AudioPlayerViewModel(
         const val STATE_PAUSED = 3
         const val  DELAY = 250L
         const val START_VALUE = "00:00"
-        fun getFactory(
-            trackUrl: String,
-            formatTimeUseCase: FormatMillisUseCase
-        ): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                AudioPlayerViewModel(trackUrl, formatTimeUseCase)
-            }
-        }
+
     }
 }

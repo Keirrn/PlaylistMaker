@@ -10,21 +10,21 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.creator.TRACK
+import com.example.playlistmaker.utill.TRACK
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.player.domain.ImageLoadRepository
 import com.example.playlistmaker.player.ui.AudioPlayer
 import com.example.playlistmaker.search.domain.Track
 import com.google.android.material.appbar.MaterialToolbar
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel: SearchViewModel by viewModel()
 
     private lateinit var songAdapter: SongAdapter
     private lateinit var historyAdapter: SongAdapter
@@ -47,13 +47,7 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
-        viewModel = ViewModelProvider(
-            this,
-            SearchViewModel.getFactory(
-                trackInteractor = Creator.provideTrackInteractor(),
-                historyRepository = Creator.provideHistoryRepository(applicationContext)
-            )
-        ).get(SearchViewModel::class.java)
+
 
         initViews()
         setupRecyclerViews()
@@ -70,17 +64,18 @@ class SearchActivity : AppCompatActivity() {
     private fun setupRecyclerViews() {
         songAdapter = SongAdapter(
             onTrackClick = { track -> onTrackClicked(track) },
-            imageLoader = Creator.provideImageLoader()
+            onLoadImage = viewModel::loadImage
+        )
+
+        historyAdapter = SongAdapter(
+            onTrackClick = { track -> onTrackClicked(track) },
+            onLoadImage = viewModel::loadImage
         )
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(this@SearchActivity)
             adapter = songAdapter
         }
 
-        historyAdapter = SongAdapter(
-            onTrackClick = { track -> onTrackClicked(track) },
-            imageLoader = Creator.provideImageLoader()
-        )
         binding.historyRecyclerView.apply {
             layoutManager = LinearLayoutManager(this@SearchActivity)
             adapter = historyAdapter
