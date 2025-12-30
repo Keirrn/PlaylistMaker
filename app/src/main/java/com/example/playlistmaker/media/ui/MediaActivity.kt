@@ -33,8 +33,8 @@ class MediaActivity : AppCompatActivity() {
 
         tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             when (position) {
-                0 -> tab.text = "Избранные треки"
-                1 -> tab.text = "Плейлисты"
+                0 -> tab.text = getString(com.example.playlistmaker.R.string.favorites_track)
+                1 -> tab.text = getString(com.example.playlistmaker.R.string.Playlists)
             }
         }
         tabMediator.attach()
