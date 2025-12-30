@@ -6,16 +6,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".media.ui.MediaActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/backgrounds">
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/backbar"
         style="@style/AppToolbar"
         app:title="@string/media"/>
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
+        app:tabTextAppearance="@style/TabText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/backgrounds"
+        app:tabIndicatorColor="@color/text"
         app:tabTextColor="@color/text"/>
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
