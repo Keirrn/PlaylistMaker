@@ -28,7 +28,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="titleTextColor">@color/text</item>
         <item name="titleTextAppearance">@style/HeaderText</item>
-        <item name="contentInsetStart">@dimen/margin_small</item>
+        <item name="contentInsetStart">@dimen/margin_default</item>
         <item name="contentInsetStartWithNavigation">0dp</item>
     </style>
 

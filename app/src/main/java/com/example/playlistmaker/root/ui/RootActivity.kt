@@ -8,6 +8,7 @@ import androidx.core.view.updatePadding
 import androidx.fragment.app.commit
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityRootBinding
+import com.example.playlistmaker.media.ui.MediaFragment
 import com.example.playlistmaker.settings.ui.SettingsFragment
 
 class RootActivity : AppCompatActivity()  {
@@ -18,7 +19,7 @@ class RootActivity : AppCompatActivity()  {
         if (savedInstanceState == null) {
             // Добавляем фрагмент в контейнер
             supportFragmentManager.commit {
-                this.add(R.id.container_view, SettingsFragment())
+                this.add(R.id.container_view, MediaFragment())
             }
         }
         setContentView(binding.root)
