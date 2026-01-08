@@ -1,11 +1,13 @@
 package com.example.playlistmaker.player.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.databinding.FragmentAudioPlayerBinding
 import com.example.playlistmaker.player.domain.ImageLoadRepository
 import com.example.playlistmaker.search.domain.Track
@@ -25,7 +27,7 @@ class AudioPlayerFragment : Fragment() {
     private lateinit var binding: FragmentAudioPlayerBinding
     private val imageLoadRepository: ImageLoadRepository by inject()
     private val viewModel: AudioPlayerViewModel by viewModel {
-        parametersOf(track?.previewUrl ?: "")
+        parametersOf(track.previewUrl)
     }
 
     private lateinit var track: Track
@@ -41,7 +43,9 @@ class AudioPlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         track = requireArguments().getParcelable<Track>(ARGS_TRACK)!!
-
+        binding.backbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
         binding.song.text = track.trackName
         binding.singer.text = track.artistName
         binding.collectionName.text = track.collectionName ?: ""
@@ -74,11 +78,11 @@ class AudioPlayerFragment : Fragment() {
 
         binding.playBtn.isEnabled = false
 
-        viewModel.observePlayerState().observe(this) { state ->
+        viewModel.observePlayerState().observe(viewLifecycleOwner) { state ->
             updatePlayButtonState(state)
         }
 
-        viewModel.observeProgressTime().observe(this) { time ->
+        viewModel.observeProgressTime().observe(viewLifecycleOwner) { time ->
             binding.timerSong.text = time
         }
 

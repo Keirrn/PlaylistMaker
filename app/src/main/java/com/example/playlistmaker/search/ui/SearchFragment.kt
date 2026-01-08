@@ -1,15 +1,18 @@
 package com.example.playlistmaker.search.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
+import com.example.playlistmaker.player.ui.AudioPlayerFragment
 import com.example.playlistmaker.search.domain.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -180,10 +183,10 @@ class SearchFragment : Fragment() {
 
     private fun onTrackClicked(track: Track) {
         if (viewModel.onTrackClicked(track)) {
-//            findNavController().navigate(
-//                R.id.,
-//                AudioPlayerFragment.createArgs(track)
-//            )
+            findNavController().navigate(
+                R.id.action_searchFragment_to_audioPlayerFragment,
+                AudioPlayerFragment.createArgs(track)
+            )
         }
     }
 }
