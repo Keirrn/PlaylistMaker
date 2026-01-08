@@ -24,12 +24,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".player.ui.AudioPlayer"
-            android:exported="false" />
-        <activity
-            android:name=".search.ui.SearchActivity"
-            android:exported="false" />
-    </application>
+         </application>
 
 </manifest>

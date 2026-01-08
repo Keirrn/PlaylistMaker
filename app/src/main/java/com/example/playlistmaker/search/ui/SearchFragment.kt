@@ -1,64 +1,41 @@
 package com.example.playlistmaker.search.ui
 
-import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
-import com.example.playlistmaker.utill.TRACK
-import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.player.domain.ImageLoadRepository
-import com.example.playlistmaker.player.ui.AudioPlayer
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.Track
-import com.google.android.material.appbar.MaterialToolbar
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivitySearchBinding
+class SearchFragment : Fragment() {
+    private lateinit var binding: FragmentSearchBinding
     private val viewModel: SearchViewModel by viewModel()
 
     private lateinit var songAdapter: SongAdapter
     private lateinit var historyAdapter: SongAdapter
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentSearchBinding.inflate(layoutInflater, container, false)
+        return binding.root
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        enableEdgeToEdge()
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.updatePadding(
-                top = systemBars.top,
-                bottom = systemBars.bottom
-            )
-            insets
-        }
-
-
-
-        initViews()
+        binding.clearButton.isVisible = false
         setupRecyclerViews()
         setupListeners()
         setupObservers()
-    }
 
-    private fun initViews() {
-        val backBar = findViewById<MaterialToolbar>(R.id.backbar)
-        backBar.setNavigationOnClickListener { finish() }
-        binding.clearButton.isVisible = false
     }
 
     private fun setupRecyclerViews() {
@@ -72,12 +49,12 @@ class SearchActivity : AppCompatActivity() {
             onLoadImage = viewModel::loadImage
         )
         binding.recyclerView.apply {
-            layoutManager = LinearLayoutManager(this@SearchActivity)
+            layoutManager = LinearLayoutManager(requireContext())
             adapter = songAdapter
         }
 
         binding.historyRecyclerView.apply {
-            layoutManager = LinearLayoutManager(this@SearchActivity)
+            layoutManager = LinearLayoutManager(requireContext())
             adapter = historyAdapter
         }
     }
@@ -203,9 +180,10 @@ class SearchActivity : AppCompatActivity() {
 
     private fun onTrackClicked(track: Track) {
         if (viewModel.onTrackClicked(track)) {
-            val intent = Intent(this, AudioPlayer::class.java)
-            intent.putExtra(TRACK, track)
-            startActivity(intent)
+//            findNavController().navigate(
+//                R.id.,
+//                AudioPlayerFragment.createArgs(track)
+//            )
         }
     }
 }
