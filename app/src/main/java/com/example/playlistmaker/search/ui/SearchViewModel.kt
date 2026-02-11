@@ -1,20 +1,17 @@
 package com.example.playlistmaker.search.ui
 
-import android.os.Handler
-import android.os.Looper
 import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.player.domain.ImageLoadRepository
 import com.example.playlistmaker.search.domain.HistoryManagerRepository
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.domain.TrackInteractor
+import com.example.playlistmaker.utill.SingleLiveEvent
 import com.example.playlistmaker.utill.debounce
+import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val trackInteractor: TrackInteractor,
@@ -40,7 +37,7 @@ class SearchViewModel(
 
     private val _clearButtonVisible = MutableLiveData<Boolean>(false)
     val clearButtonVisible: LiveData<Boolean> = _clearButtonVisible
-    private val _openPlayerEvent = MutableLiveData<Track>()
+    private val _openPlayerEvent = SingleLiveEvent<Track>()
     val openPlayerEvent: LiveData<Track> = _openPlayerEvent
     private val clickDebounce = debounce<Track>(
         delayMillis = CLICK_DEBOUNCE_DELAY,
@@ -87,23 +84,24 @@ class SearchViewModel(
 
         _searchState.postValue(SearchState.Loading)
 
-        trackInteractor.searchTrack(query, object : TrackInteractor.TrackConsumer {
-            override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
-                when {
-                    errorMessage != null && errorMessage != "Ничего не нашлось" -> {
-                        _searchState.postValue(SearchState.Error(errorMessage, true))
-                    }
+        viewModelScope.launch {
+            trackInteractor.searchTrack(query)
+                .collect { (foundTracks, errorMessage) ->
+                    when {
+                        errorMessage != null && errorMessage != "Ничего не нашлось" -> {
+                            _searchState.postValue(SearchState.Error(errorMessage, true))
+                        }
 
-                    foundTracks.isNullOrEmpty() -> {
-                        _searchState.postValue(SearchState.Error("Ничего не нашлось", false))
-                    }
+                        foundTracks.isNullOrEmpty() -> {
+                            _searchState.postValue(SearchState.Error("Ничего не нашлось", false))
+                        }
 
-                    else -> {
-                        _searchState.postValue(SearchState.Content(foundTracks))
+                        else -> {
+                            _searchState.postValue(SearchState.Content(foundTracks))
+                        }
                     }
                 }
-            }
-        })
+        }
     }
 
 

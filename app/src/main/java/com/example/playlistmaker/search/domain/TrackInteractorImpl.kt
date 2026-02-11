@@ -1,15 +1,14 @@
 package com.example.playlistmaker.search.domain
 
-import java.util.concurrent.Executors
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class TrackInteractorImpl(private val repository: TrackRepository) : TrackInteractor {
 
-    private val executor = Executors.newCachedThreadPool()
-
-    override fun searchTrack(term: String, consumer: TrackInteractor.TrackConsumer) {
-        executor.execute {
-            val result = repository.searchTracks(term)
-            consumer.consume(result.tracks, result.errorMessage)
-        }
+    override fun searchTrack(term: String): Flow<Pair<List<Track>?, String?>> {
+        return repository.searchTracks(term)
+            .map { result ->
+                Pair(result.tracks, result.errorMessage)
+            }
     }
 }
