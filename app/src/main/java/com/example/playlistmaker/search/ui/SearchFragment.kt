@@ -1,7 +1,6 @@
 package com.example.playlistmaker.search.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,12 +42,12 @@ class SearchFragment : Fragment() {
 
     private fun setupRecyclerViews() {
         songAdapter = SongAdapter(
-            onTrackClick = { track -> onTrackClicked(track) },
+            onTrackClick = { track -> viewModel.onTrackClicked(track) },
             onLoadImage = viewModel::loadImage
         )
 
         historyAdapter = SongAdapter(
-            onTrackClick = { track -> onTrackClicked(track) },
+            onTrackClick = { track -> viewModel.onTrackClicked(track) },
             onLoadImage = viewModel::loadImage
         )
         binding.recyclerView.apply {
@@ -83,15 +82,20 @@ class SearchFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.searchState.observe(this) { state ->
+        viewModel.searchState.observe(viewLifecycleOwner) { state ->
             handleSearchState(state)
         }
-
-        viewModel.historyState.observe(this) { history ->
+        viewModel.openPlayerEvent.observe(viewLifecycleOwner) { track ->
+            findNavController().navigate(
+                R.id.action_searchFragment_to_audioPlayerFragment,
+                AudioPlayerFragment.createArgs(track)
+            )
+        }
+        viewModel.historyState.observe(viewLifecycleOwner) { history ->
             handleHistoryState(history)
         }
 
-        viewModel.clearButtonVisible.observe(this) { isVisible ->
+        viewModel.clearButtonVisible.observe(viewLifecycleOwner) { isVisible ->
             binding.clearButton.isVisible = isVisible
         }
     }
@@ -181,12 +185,5 @@ class SearchFragment : Fragment() {
         binding.updateBtn.isVisible = false
     }
 
-    private fun onTrackClicked(track: Track) {
-        if (viewModel.onTrackClicked(track)) {
-            findNavController().navigate(
-                R.id.action_searchFragment_to_audioPlayerFragment,
-                AudioPlayerFragment.createArgs(track)
-            )
-        }
-    }
+
 }
