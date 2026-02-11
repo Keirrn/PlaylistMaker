@@ -1,18 +1,17 @@
 package com.example.playlistmaker.search.ui
 
-import android.os.Handler
-import android.os.Looper
 import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.player.domain.ImageLoadRepository
 import com.example.playlistmaker.search.domain.HistoryManagerRepository
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.domain.TrackInteractor
+import com.example.playlistmaker.utill.SingleLiveEvent
+import com.example.playlistmaker.utill.debounce
+import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val trackInteractor: TrackInteractor,
@@ -24,14 +23,12 @@ class SearchViewModel(
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
+
     fun loadImage(url: String, imageView: ImageView) {
         imageLoader.loadImage(url, imageView, 8f)
     }
-    private val handler = Handler(Looper.getMainLooper())
-    private var currentQuery = ""
-    private val searchRunnable = Runnable { searchTracks(currentQuery) }
-    private var isClickAllowed = true
 
+    private var currentQuery = ""
     private val _searchState = MutableLiveData<SearchState>(SearchState.Empty)
     val searchState: LiveData<SearchState> = _searchState
 
@@ -40,17 +37,37 @@ class SearchViewModel(
 
     private val _clearButtonVisible = MutableLiveData<Boolean>(false)
     val clearButtonVisible: LiveData<Boolean> = _clearButtonVisible
+    private val _openPlayerEvent = SingleLiveEvent<Track>()
+    val openPlayerEvent: LiveData<Track> = _openPlayerEvent
+    private val clickDebounce = debounce<Track>(
+        delayMillis = CLICK_DEBOUNCE_DELAY,
+        coroutineScope = viewModelScope,
+        useLastParam = false
+    ) { track ->
+        historyRepository.addTrackToHistory(track)
+        _openPlayerEvent.postValue(track)
+    }
+    private val searchDebounce = debounce<String>(
+        delayMillis = SEARCH_DEBOUNCE_DELAY,
+        coroutineScope = viewModelScope,
+        useLastParam = true
+    ) { query ->
+        searchTracks(query)
+    }
+
+    fun onTrackClicked(track: Track) {
+        clickDebounce(track)
+    }
 
     fun onTextChanged(text: String) {
         currentQuery = text
-        _clearButtonVisible.postValue( text.isNotEmpty())
+        _clearButtonVisible.postValue(text.isNotEmpty())
 
         if (text.isEmpty()) {
             showHistory()
-            handler.removeCallbacks(searchRunnable)
             _searchState.postValue(SearchState.Empty)
         } else {
-            searchDebounce()
+            searchDebounce(text)
         }
     }
 
@@ -61,42 +78,32 @@ class SearchViewModel(
         _searchState.postValue(SearchState.Empty)
     }
 
-    fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
-    }
 
     private fun searchTracks(query: String) {
         if (query.isEmpty()) return
 
         _searchState.postValue(SearchState.Loading)
 
-        trackInteractor.searchTrack(query, object : TrackInteractor.TrackConsumer {
-            override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
-                when {
-                    errorMessage != null && errorMessage != "Ничего не нашлось" -> {
-                        _searchState.postValue( SearchState.Error(errorMessage, true))
-                    }
-                    foundTracks.isNullOrEmpty() -> {
-                        _searchState.postValue( SearchState.Error("Ничего не нашлось", false))
-                    }
-                    else -> {
-                        _searchState.postValue(SearchState.Content(foundTracks))
+        viewModelScope.launch {
+            trackInteractor.searchTrack(query)
+                .collect { (foundTracks, errorMessage) ->
+                    when {
+                        errorMessage != null && errorMessage != "Ничего не нашлось" -> {
+                            _searchState.postValue(SearchState.Error(errorMessage, true))
+                        }
+
+                        foundTracks.isNullOrEmpty() -> {
+                            _searchState.postValue(SearchState.Error("Ничего не нашлось", false))
+                        }
+
+                        else -> {
+                            _searchState.postValue(SearchState.Content(foundTracks))
+                        }
                     }
                 }
-            }
-        })
-    }
-
-    fun onTrackClicked(track: Track): Boolean {
-        return if (clickDebounce()) {
-            historyRepository.addTrackToHistory(track)
-            showHistory()
-            true
-        } else {
-            false
         }
     }
+
 
     fun refreshSearch() {
         if (currentQuery.isNotEmpty()) {
@@ -124,17 +131,5 @@ class SearchViewModel(
         showHistory()
     }
 
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
-    }
 
-    override fun onCleared() {
-        super.onCleared()
-        handler.removeCallbacks(searchRunnable)
-    }
 }

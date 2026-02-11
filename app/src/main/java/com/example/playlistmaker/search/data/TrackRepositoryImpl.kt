@@ -3,6 +3,8 @@ package com.example.playlistmaker.search.data
 import com.example.playlistmaker.search.domain.SearchResult
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.domain.TrackRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -10,10 +12,10 @@ import java.util.Locale
 class TrackRepositoryImpl(
     private val networkClient: NetworkClient
 ) : TrackRepository {
-    override fun searchTracks(query: String): SearchResult {
+    override fun searchTracks(query: String): Flow<SearchResult> = flow {
         val response = networkClient.doRequest(TrackSearchRequest(query))
 
-        return when (response.resultCode) {
+        when (response.resultCode) {
             200 -> {
                 val tracks = (response as TrackResponse).results.map {
                     Track(
@@ -29,18 +31,20 @@ class TrackRepositoryImpl(
                         previewUrl = it.previewUrl
                     )
                 }
-                SearchResult(tracks, null)
+                emit(SearchResult(tracks, null))
             }
 
             -1 -> {
-                SearchResult(
-                    emptyList(),
-                    "Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету"
+                emit(
+                    SearchResult(
+                        emptyList(),
+                        "Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету"
+                    )
                 )
             }
 
             else -> {
-                SearchResult(emptyList(), "Ничего не нашлось")
+                emit(SearchResult(emptyList(), "Ничего не нашлось"))
             }
         }
     }

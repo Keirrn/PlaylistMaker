@@ -29,6 +29,6 @@ val viewModelModule = module{
     }
 
     viewModel { (url: String) ->
-        AudioPlayerViewModel(url, get(), get(),get())
+        AudioPlayerViewModel(url, get(), get())
     }
 }

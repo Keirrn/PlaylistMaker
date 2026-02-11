@@ -10,6 +10,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.player.domain.FormatMillisUseCase
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -17,32 +19,34 @@ class AudioPlayerViewModel(
     private val url: String,
     private val formatTimeUseCase: FormatMillisUseCase,
     private val mediaPlayer: MediaPlayer,
-    private val handler: android.os.Handler
 ) : ViewModel() {
 
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
     fun observePlayerState(): LiveData<Int> = playerStateLiveData
 
     private val progressTimeLiveData = MutableLiveData(START_VALUE)
+    private var timerJob: Job? = null
     fun observeProgressTime(): LiveData<String> = progressTimeLiveData
 
-    private val updateTimerRunnable = object : Runnable {
-        override fun run() {
-            if (playerStateLiveData.value == STATE_PLAYING) {
-                updateTimer()
-                handler.postDelayed(this, DELAY)
-            }
-        }
-    }
+
 
     init {
         preparePlayer()
     }
+    private fun startTimer() {
+        timerJob = viewModelScope.launch {
+            while (mediaPlayer.isPlaying) {
+                delay(DELAY)
+                val formattedTime = formatTimeUseCase(mediaPlayer.currentPosition.toLong())
+                progressTimeLiveData.postValue(formattedTime)
+            }
+        }
+    }
 
     override fun onCleared() {
         super.onCleared()
+        timerJob?.cancel()
         mediaPlayer.release()
-        resetTimer()
     }
 
     fun onPlayButtonClicked() {
@@ -63,33 +67,27 @@ class AudioPlayerViewModel(
             playerStateLiveData.postValue(STATE_PREPARED)
         }
         mediaPlayer.setOnCompletionListener {
-            playerStateLiveData.postValue(STATE_PREPARED)
+            timerJob?.cancel()
             resetTimer()
+            playerStateLiveData.postValue(STATE_PREPARED)
         }
     }
 
     private fun startPlayer() {
         mediaPlayer.start()
         playerStateLiveData.postValue(STATE_PLAYING)
-        updateTimer()
-        handler.postDelayed(updateTimerRunnable, DELAY)
+        startTimer()
     }
 
     private fun pausePlayer() {
         mediaPlayer.pause()
+        timerJob?.cancel()
         playerStateLiveData.postValue(STATE_PAUSED)
-        handler.removeCallbacks(updateTimerRunnable)
-    }
 
-    private fun updateTimer() {
-        viewModelScope.launch {
-            val formattedTime = formatTimeUseCase(mediaPlayer.currentPosition.toLong())
-            progressTimeLiveData.postValue(formattedTime)
-        }
     }
 
     private fun resetTimer() {
-        handler.removeCallbacks(updateTimerRunnable)
+        mediaPlayer.stop()
         progressTimeLiveData.postValue(START_VALUE)
     }
 
@@ -98,7 +96,7 @@ class AudioPlayerViewModel(
         const val STATE_PREPARED = 1
         const val STATE_PLAYING = 2
         const val STATE_PAUSED = 3
-        const val  DELAY = 250L
+        const val  DELAY = 300L
         const val START_VALUE = "00:00"
 
     }
