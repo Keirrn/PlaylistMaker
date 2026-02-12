@@ -34,6 +34,7 @@ class AudioPlayerViewModel(
         preparePlayer()
     }
     private fun startTimer() {
+        timerJob?.cancel()
         timerJob = viewModelScope.launch {
             while (mediaPlayer.isPlaying) {
                 delay(DELAY)
