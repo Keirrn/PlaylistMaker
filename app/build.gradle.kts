@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-parcelize")
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -41,17 +41,20 @@ android {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
-    implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
-    implementation("androidx.fragment:fragment-ktx:1.5.6")
-    implementation("androidx.viewpager2:viewpager2:1.0.0")
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.viewpager2)
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
     implementation(libs.material.v161)
     implementation(libs.glide)
-    kapt(libs.compiler)
+    ksp (libs.ksp)
     implementation(libs.koin.android)
     implementation( libs.androidx.activity.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
