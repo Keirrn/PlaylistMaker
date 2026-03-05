@@ -1,11 +1,16 @@
-package com.example.playlistmaker.search.data
+package com.example.playlistmaker.media.data.db
 
-data class TrackDto (
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "track_table")
+class TrackEntity(
+    @PrimaryKey
+    val trackId: Int,
     val trackName: String,
     val artistName: String,
-    val trackTimeMillis: Long,
+    val trackTime: String,
     val artworkUrl100: String,
-    val trackId: Int,
     val collectionName: String?,
     val releaseDate: String,
     val primaryGenreName: String,
