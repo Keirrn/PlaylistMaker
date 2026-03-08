@@ -12,7 +12,6 @@ class PlaylistsFragment : Fragment() {
     private val viewModel: PlaylistsViewModel by viewModel()
 
 
-
     private var _binding: FragmentPlaylistsBinding? = null
     private val binding get() = _binding!!
 
@@ -23,6 +22,7 @@ class PlaylistsFragment : Fragment() {
         _binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     companion object {
         fun newInstance() = PlaylistsFragment()
     }

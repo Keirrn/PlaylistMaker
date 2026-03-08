@@ -4,4 +4,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface TrackRepository {
     fun searchTracks(query: String): Flow<SearchResult>
+
 }

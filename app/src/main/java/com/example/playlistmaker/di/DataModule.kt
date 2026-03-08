@@ -2,7 +2,6 @@ package com.example.playlistmaker.di
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.example.playlistmaker.media.data.db.PlaylistMakerDatabase
 import com.example.playlistmaker.player.data.ImageLoadRepositoryImpl
 import com.example.playlistmaker.player.domain.ImageLoadRepository
@@ -54,10 +53,11 @@ val dataModule = module {
         NavigationRepositoryImpl(androidContext())
     }
     single<ThemeSwitcher> { ThemeSwitcherImpl() }
-    single <TrackRepository>{
-        TrackRepositoryImpl(get(), get())
+    single<TrackRepository> {
+        TrackRepositoryImpl(get())
     }
-    single<PlaylistMakerDatabase>{
+    single { get<PlaylistMakerDatabase>().trackDao() }
+    single<PlaylistMakerDatabase> {
         Room.databaseBuilder(
             androidContext(),
             PlaylistMakerDatabase::class.java,

@@ -12,7 +12,6 @@ import java.util.Locale
 
 class TrackRepositoryImpl(
     private val networkClient: NetworkClient,
-    private val database: PlaylistMakerDatabase
 ) : TrackRepository {
     override fun searchTracks(query: String): Flow<SearchResult> = flow {
         val response = networkClient.doRequest(TrackSearchRequest(query))
@@ -32,14 +31,6 @@ class TrackRepositoryImpl(
                         country = it.country,
                         previewUrl = it.previewUrl
                     )
-                }
-                val favoriteIds = try {
-                    database.trackDao().getTracksId()
-                } catch (e: Exception) {
-                    emptyList()
-                }
-                tracks.forEach { track ->
-                    track.isFavorite = favoriteIds.contains(track.trackId)
                 }
                 emit(SearchResult(tracks, null))
             }

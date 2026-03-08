@@ -1,7 +1,6 @@
 package com.example.playlistmaker.media.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,7 @@ import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.ui.SongAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class FavoritesFragment: Fragment(){
+class FavoritesFragment : Fragment() {
     private val viewModel: FavoritesViewModel by viewModel()
     private lateinit var songAdapter: SongAdapter
     private var _binding: FragmentFavoritesBinding? = null
@@ -41,7 +40,7 @@ class FavoritesFragment: Fragment(){
         }
         viewModel.fillData()
         viewModel.observeState().observe(viewLifecycleOwner) { state ->
-            when(state) {
+            when (state) {
 
                 is FavoritesState.Empty -> {
                     showPlaceholder()
@@ -52,8 +51,9 @@ class FavoritesFragment: Fragment(){
                 }
 
             }
+        }
     }
-    }
+
     private fun setupAdapter() {
         songAdapter = SongAdapter(
             onTrackClick = { track -> viewModel.onTrackClicked(track) },
@@ -65,11 +65,12 @@ class FavoritesFragment: Fragment(){
         }
     }
 
-    private fun showPlaceholder(){
-      binding.placeholderLayout.isVisible = true
+    private fun showPlaceholder() {
+        binding.placeholderLayout.isVisible = true
         binding.recyclerView.isVisible = false
     }
-    private fun showTracks(trackList: List<Track>){
+
+    private fun showTracks(trackList: List<Track>) {
         binding.placeholderLayout.isVisible = false
         binding.recyclerView.isVisible = true
         songAdapter.updateTracks(trackList)
@@ -79,5 +80,5 @@ class FavoritesFragment: Fragment(){
     companion object {
         fun newInstance() = FavoritesFragment()
     }
- }
+}
 
