@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import com.example.playlistmaker.media.data.db.dao.TrackDao
 
 @Database(
-    version = 1,
+    version = 2,
     entities = [
         TrackEntity::class
     ]
