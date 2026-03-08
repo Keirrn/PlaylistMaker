@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.data
 
+import com.example.playlistmaker.media.data.db.PlaylistMakerDatabase
 import com.example.playlistmaker.search.domain.SearchResult
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.domain.TrackRepository
@@ -10,7 +11,7 @@ import java.util.Date
 import java.util.Locale
 
 class TrackRepositoryImpl(
-    private val networkClient: NetworkClient
+    private val networkClient: NetworkClient,
 ) : TrackRepository {
     override fun searchTracks(query: String): Flow<SearchResult> = flow {
         val response = networkClient.doRequest(TrackSearchRequest(query))

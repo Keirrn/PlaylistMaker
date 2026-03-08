@@ -1,28 +1,29 @@
 package com.example.playlistmaker.player.ui
 
 import android.media.MediaPlayer
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.playlistmaker.media.domain.FavoritesInteractor
 import com.example.playlistmaker.player.domain.FormatMillisUseCase
+import com.example.playlistmaker.search.domain.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
 class AudioPlayerViewModel(
-    private val url: String,
+    private val track: Track,
     private val formatTimeUseCase: FormatMillisUseCase,
     private val mediaPlayer: MediaPlayer,
+    private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
 
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
     fun observePlayerState(): LiveData<Int> = playerStateLiveData
+    private val isFavoriteLiveData = MutableLiveData(track.isFavorite)
+    fun observeIsFavorite(): LiveData<Boolean> = isFavoriteLiveData
 
     private val progressTimeLiveData = MutableLiveData(START_VALUE)
     private var timerJob: Job? = null
@@ -32,8 +33,10 @@ class AudioPlayerViewModel(
 
     init {
         preparePlayer()
+        syncFavoriteState()
     }
     private fun startTimer() {
+        timerJob?.cancel()
         timerJob = viewModelScope.launch {
             while (mediaPlayer.isPlaying) {
                 delay(DELAY)
@@ -42,7 +45,15 @@ class AudioPlayerViewModel(
             }
         }
     }
-
+    private fun syncFavoriteState() {
+        viewModelScope.launch {
+            favoritesInteractor.getFavorites().collect { favorites ->
+                val isFavorite = favorites.any { it.trackId == track.trackId }
+                track.isFavorite = isFavorite
+                isFavoriteLiveData.postValue(isFavorite)
+            }
+        }
+    }
     override fun onCleared() {
         super.onCleared()
         timerJob?.cancel()
@@ -59,9 +70,23 @@ class AudioPlayerViewModel(
     fun onPause() {
         pausePlayer()
     }
+    fun onFavoriteClicked(){
+        viewModelScope.launch {
+
+            if (!track.isFavorite) {
+                favoritesInteractor.addToFavorites(track)
+            } else {
+                favoritesInteractor.removeFromFavorites(track)
+            }
+
+            track.isFavorite = !track.isFavorite
+            isFavoriteLiveData.postValue(track.isFavorite)
+        }
+
+    }
 
     private fun preparePlayer() {
-        mediaPlayer.setDataSource(url)
+        mediaPlayer.setDataSource(track.previewUrl)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
             playerStateLiveData.postValue(STATE_PREPARED)

@@ -9,6 +9,7 @@ import android.os.Handler
 import android.os.Looper
 import com.example.playlistmaker.media.ui.FavoritesViewModel
 import com.example.playlistmaker.media.ui.PlaylistsViewModel
+import com.example.playlistmaker.search.domain.Track
 import org.koin.dsl.module
 
 val viewModelModule = module{
@@ -22,13 +23,13 @@ val viewModelModule = module{
         SettingsViewModel(get(), get())
     }
     viewModel {
-            FavoritesViewModel()
+            FavoritesViewModel(get  (),get())
     }
     viewModel {
             PlaylistsViewModel()
     }
 
-    viewModel { (url: String) ->
-        AudioPlayerViewModel(url, get(), get())
+    viewModel { (track: Track) ->
+        AudioPlayerViewModel( track, get(),get(),get())
     }
 }

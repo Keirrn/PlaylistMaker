@@ -27,10 +27,12 @@ class AudioPlayerFragment : Fragment() {
     private lateinit var binding: FragmentAudioPlayerBinding
     private val imageLoadRepository: ImageLoadRepository by inject()
     private val viewModel: AudioPlayerViewModel by viewModel {
-        parametersOf(track.previewUrl)
+        parametersOf(track)
     }
 
-    private lateinit var track: Track
+    private val track: Track by lazy {
+        requireArguments().getParcelable<Track>(ARGS_TRACK)!!
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,7 +44,6 @@ class AudioPlayerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        track = requireArguments().getParcelable<Track>(ARGS_TRACK)!!
         binding.backbar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
@@ -85,7 +86,16 @@ class AudioPlayerFragment : Fragment() {
         viewModel.observeProgressTime().observe(viewLifecycleOwner) { time ->
             binding.timerSong.text = time
         }
+        viewModel.observeIsFavorite().observe(viewLifecycleOwner){ isFavorite ->
+            if (isFavorite){
+            binding.likeBtn.setImageResource(com.example.playlistmaker.R.drawable.liked_ic)}
+            else{
+            binding.likeBtn.setImageResource(com.example.playlistmaker.R.drawable.like_ic)}
+        }
 
+        binding.likeBtn.setOnClickListener {
+            viewModel.onFavoriteClicked()
+        }
         binding.playBtn.setOnClickListener {
             viewModel.onPlayButtonClicked()
         }
