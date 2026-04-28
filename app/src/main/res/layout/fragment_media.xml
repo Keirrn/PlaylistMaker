@@ -10,9 +10,7 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/backbar"
         style="@style/AppToolbar"
-        app:navigationIcon="@drawable/back_ic"
-
-    app:title="@string/media"/>
+        app:title="@string/media"/>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
