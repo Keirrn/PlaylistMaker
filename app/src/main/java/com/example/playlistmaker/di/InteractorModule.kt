@@ -2,6 +2,9 @@ package com.example.playlistmaker.di
 
 import com.example.playlistmaker.media.domain.FavoritesInteractor
 import com.example.playlistmaker.media.domain.FavoritesInteractorImpl
+import com.example.playlistmaker.media.domain.PlaylistInteractor
+import com.example.playlistmaker.media.domain.PlaylistInteractorImpl
+import com.example.playlistmaker.media.domain.PlaylistRepository
 import com.example.playlistmaker.search.domain.TrackInteractor
 import com.example.playlistmaker.search.domain.TrackInteractorImpl
 import com.example.playlistmaker.settings.data.ThemeSwitcherImpl
@@ -9,7 +12,7 @@ import com.example.playlistmaker.settings.domain.ThemeInteractor
 import com.example.playlistmaker.settings.domain.ThemeSwitcher
 import org.koin.dsl.module
 
-val interactorModule= module {
+val interactorModule = module {
     factory<TrackInteractor> { TrackInteractorImpl(get()) }
     single<ThemeSwitcher> { ThemeSwitcherImpl() }
     single<ThemeInteractor> {
@@ -18,7 +21,10 @@ val interactorModule= module {
             themeSwitcher = get()
         )
     }
-    single<FavoritesInteractor>{
+    single<FavoritesInteractor> {
         FavoritesInteractorImpl(get())
+    }
+    single<PlaylistInteractor> {
+        PlaylistInteractorImpl(get())
     }
 }
