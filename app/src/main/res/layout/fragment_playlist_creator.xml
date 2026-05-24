@@ -32,8 +32,10 @@
             android:paddingBottom="@dimen/margin_default">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/pickerImage"
+                android:layout_width="@dimen/image_312dp"
+                android:layout_height="@dimen/image_312dp"
+                android:scaleType="centerCrop"
                 android:src="@drawable/add_photo_ic"
                 android:layout_marginTop="26dp"
                 android:layout_gravity="center_horizontal" />

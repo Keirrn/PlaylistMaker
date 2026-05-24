@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.TypedValue
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.domain.ImageLoadRepository
@@ -14,8 +15,10 @@ class ImageLoadRepositoryImpl : ImageLoadRepository {
         Glide.with(imageView.context)
             .load(url)
             .placeholder(R.drawable.placeholder)
-            .centerCrop()
-            .transform(RoundedCorners(dpToPx(cornerRadiusDp, imageView.context)))
+            .transform(
+                CenterCrop(),
+                RoundedCorners(dpToPx(cornerRadiusDp, imageView.context))
+            )
             .into(imageView)
     }
 

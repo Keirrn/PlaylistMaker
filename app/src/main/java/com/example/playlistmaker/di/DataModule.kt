@@ -2,7 +2,10 @@ package com.example.playlistmaker.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.playlistmaker.media.data.ImageRepositoryImpl
+import com.example.playlistmaker.media.data.PlaylistDbConvertor
 import com.example.playlistmaker.media.data.db.PlaylistMakerDatabase
+import com.example.playlistmaker.media.domain.ImageRepository
 import com.example.playlistmaker.player.data.ImageLoadRepositoryImpl
 import com.example.playlistmaker.player.domain.ImageLoadRepository
 import com.example.playlistmaker.search.data.HistoryManagerImpl
@@ -40,7 +43,7 @@ val dataModule = module {
     single<HistoryManagerRepository> {
         HistoryManagerImpl(get())
     }
-
+    factory { PlaylistDbConvertor() }
     single<ThemeRepository> {
         ThemeRepositoryImpl(
             sharedPrefs = androidContext().getSharedPreferences(
@@ -56,7 +59,6 @@ val dataModule = module {
     single<TrackRepository> {
         TrackRepositoryImpl(get())
     }
-    single { get<PlaylistMakerDatabase>().trackDao() }
     single<PlaylistMakerDatabase> {
         Room.databaseBuilder(
             androidContext(),
@@ -64,4 +66,7 @@ val dataModule = module {
             "playlist_maker_database.db"
         ).build()
     }
+    single { get<PlaylistMakerDatabase>().trackDao() }
+    single { get<PlaylistMakerDatabase>().playlistDao() }
+    single<ImageRepository> { ImageRepositoryImpl(androidContext()) }
 }

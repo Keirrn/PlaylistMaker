@@ -3,6 +3,7 @@
     <dimen name="text_primary">22sp</dimen>
     <dimen name="text_small">16sp</dimen>
     <dimen name="text_micro">11sp</dimen>
+    <dimen name="text_mini">12sp</dimen>
     <dimen name="text_title">19sp</dimen>
     <dimen name="text_audio_player">13sp</dimen>
     <dimen name="text_button_small">14sp</dimen>
@@ -30,4 +31,6 @@
     <dimen name="width_zero">0dp</dimen>
     <dimen name="padding_settings_item">20dp</dimen>
     <dimen name="margin_32">32dp</dimen>
+    <dimen name="image_312dp">312dp</dimen>
+    <dimen name="image_medium">160dp</dimen>
 </resources>
