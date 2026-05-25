@@ -1,5 +1,6 @@
 package com.example.playlistmaker.media.domain
 
+import com.example.playlistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
 
 class PlaylistInteractorImpl(
@@ -20,5 +21,12 @@ class PlaylistInteractorImpl(
 
     override fun getAllPlaylists(): Flow<List<Playlist>> {
         return repository.getAllPlaylists()
+    }
+    override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist): Boolean {
+
+        return repository.addTrackToPlaylist(
+            track,
+            playlist
+        )
     }
 }

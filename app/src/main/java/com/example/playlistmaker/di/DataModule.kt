@@ -68,5 +68,6 @@ val dataModule = module {
     }
     single { get<PlaylistMakerDatabase>().trackDao() }
     single { get<PlaylistMakerDatabase>().playlistDao() }
+    single { get<PlaylistMakerDatabase>().playlistTrackDao() }
     single<ImageRepository> { ImageRepositoryImpl(androidContext()) }
 }

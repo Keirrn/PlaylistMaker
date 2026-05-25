@@ -1,7 +1,9 @@
 package com.example.playlistmaker.media.data
 
 import com.example.playlistmaker.media.data.db.PlaylistEntity
+import com.example.playlistmaker.media.data.db.PlaylistTrackEntity
 import com.example.playlistmaker.media.domain.Playlist
+import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
 
 class PlaylistDbConvertor {
@@ -24,8 +26,23 @@ class PlaylistDbConvertor {
             playlistEntity.playlistName,
             playlistEntity.playlistDescription,
             playlistEntity.coverPath,
-            gson.fromJson(playlistEntity.trackIds, Array<Int>::class.java).toList(),
+            gson.fromJson(playlistEntity.trackIds, Array<Long>::class.java).toList(),
             playlistEntity.tracksCount
+        )
+    }
+    fun mapToPlaylistTrackEntity(track: Track): PlaylistTrackEntity {
+        return PlaylistTrackEntity(
+            track.trackId,
+            track.trackName,
+            track.artistName,
+            track.trackTime,
+            track.artworkUrl100,
+            track.collectionName,
+            track.releaseDate,
+            track.primaryGenreName,
+            track.country,
+            track.previewUrl,
+            System.currentTimeMillis()
         )
     }
 }

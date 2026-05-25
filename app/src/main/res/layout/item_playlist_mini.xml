@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="horizontal"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/btn_height"
+    android:background="@color/backgrounds">
+<ImageView
+    android:id="@+id/coverImage"
+    android:layout_width="@dimen/icon_song"
+    android:layout_height="@dimen/icon_song"
+    android:layout_marginStart="13dp"
+    android:layout_gravity="center_vertical"
+    android:src="@drawable/placeholder"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_8"
+        android:layout_marginTop="@dimen/margin_14"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/playlistName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_small"
+            android:textColor="@color/text"
+            android:textFontWeight="400"
+            android:fontFamily="@font/ys_display_regular"/>
+
+        <TextView
+            android:id="@+id/tracksCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_micro"
+            android:textFontWeight="400"
+            android:textColor="@color/text_gray"
+            android:fontFamily="@font/ys_display_regular"/>
+    </LinearLayout>
+</LinearLayout>
