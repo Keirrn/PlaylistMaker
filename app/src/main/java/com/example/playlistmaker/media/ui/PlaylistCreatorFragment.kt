@@ -13,6 +13,7 @@ import androidx.core.net.toUri
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistCreatorBinding
 import com.example.playlistmaker.player.domain.ImageLoadRepository
 import com.example.playlistmaker.utill.ToastUtils
@@ -113,10 +114,10 @@ class PlaylistCreatorFragment : Fragment() {
         if (viewModel.hasUnsavedData()) {
 
             MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Завершить создание плейлиста?")
-                .setMessage("Все несохраненные данные будут потеряны")
-                .setNeutralButton("Отмена", null)
-                .setPositiveButton("Завершить") { _, _ ->
+                .setTitle(getString(R.string.finish_create_playlist))
+                .setMessage(getString(R.string.warning_save))
+                .setNeutralButton(getString(R.string.cancel), null)
+                .setPositiveButton(getString(R.string.finish)) { _, _ ->
                     findNavController().navigateUp()
                 }
                 .show()
