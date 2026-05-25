@@ -19,5 +19,5 @@ interface TrackDao {
     suspend fun getTracks(): List<TrackEntity>
 
     @Query("SELECT trackId FROM track_table")
-    suspend fun getTracksId(): List<Int>
+    suspend fun getTracksId(): List<Long>
 }

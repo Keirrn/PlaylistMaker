@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.playlistmaker.databinding.FragmentSettingsBinding
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 
 class SettingsFragment : Fragment() {
-    private val viewModel: SettingsViewModel by inject()
+    private val viewModel: SettingsViewModel by viewModel()
     private lateinit var binding: FragmentSettingsBinding
     override fun onCreateView(
         inflater: LayoutInflater,

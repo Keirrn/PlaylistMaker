@@ -15,12 +15,15 @@ class NavigationRepositoryImpl (
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, context.getString(R.string.course_link))
         }
-        context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_dialog_title)))
+        context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_dialog_title)).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        })
     }
 
     override fun openAgreement() {
         val intent = Intent(Intent.ACTION_VIEW).apply {
             data = Uri.parse(context.getString(R.string.offer_link))
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         context.startActivity(intent)
     }
@@ -31,6 +34,7 @@ class NavigationRepositoryImpl (
             putExtra(Intent.EXTRA_EMAIL, arrayOf(context.getString(R.string.support_email)))
             putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.support_email_subject))
             putExtra(Intent.EXTRA_TEXT, context.getString(R.string.support_email_body))
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         context.startActivity(supportIntent)
     }

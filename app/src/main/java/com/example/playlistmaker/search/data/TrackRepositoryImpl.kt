@@ -18,19 +18,23 @@ class TrackRepositoryImpl(
 
         when (response.resultCode) {
             200 -> {
-                val tracks = (response as TrackResponse).results.map {
-                    Track(
-                        trackName = it.trackName,
-                        artistName = it.artistName,
-                        trackTime = formatMillis(it.trackTimeMillis),
-                        artworkUrl100 = it.artworkUrl100,
-                        trackId = it.trackId,
-                        collectionName = it.collectionName,
-                        releaseDate = it.releaseDate,
-                        primaryGenreName = it.primaryGenreName,
-                        country = it.country,
-                        previewUrl = it.previewUrl
-                    )
+                val tracks = (response as TrackResponse).results.mapNotNull { dto ->
+                    try {
+                        Track(
+                            trackName = dto.trackName,
+                            artistName = dto.artistName,
+                            trackTime = formatMillis(dto.trackTimeMillis),
+                            artworkUrl100 = dto.artworkUrl100,
+                            trackId = dto.trackId,
+                            collectionName = dto.collectionName,
+                            releaseDate = dto.releaseDate,
+                            primaryGenreName = dto.primaryGenreName,
+                            country = dto.country,
+                            previewUrl = dto.previewUrl
+                        )
+                    } catch (e: Exception) {
+                        null
+                    }
                 }
                 emit(SearchResult(tracks, null))
             }

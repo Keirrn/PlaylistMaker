@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/backbar"
+        style="@style/AppToolbar"
+        app:title="@string/new_playlist"
+        app:navigationIcon="@drawable/back_ic"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@id/backbar"
+        app:layout_constraintBottom_toTopOf="@+id/createButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/mainLinear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/margin_default">
+
+            <ImageView
+                android:id="@+id/pickerImage"
+                android:layout_width="@dimen/image_312dp"
+                android:layout_height="@dimen/image_312dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/add_photo_ic"
+                android:layout_marginTop="26dp"
+                android:layout_gravity="center_horizontal" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/OutlinedTextField"
+                android:layout_width="match_parent"
+                android:hint="@string/name">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/playlist_name_edit_text"
+                    style="@style/TextInputEditText"
+                    android:layout_width="match_parent" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/OutlinedTextField"
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/margin_default"
+                android:hint="@string/description">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/description_edit_text"
+                    style="@style/TextInputEditText"
+                    android:layout_width="match_parent" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/createButton"
+        android:backgroundTint="@color/button_background_color"
+        android:enabled="false"
+        app:cornerRadius="@dimen/margin_8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/create"
+        android:textAllCaps="false"
+        android:fontFamily="@font/ys_display_medium"
+        android:textSize="@dimen/text_small"
+        android:textFontWeight="500"
+        android:textColor="@color/white"
+        android:layout_marginHorizontal="@dimen/margin_default"
+        android:layout_marginBottom="@dimen/margin_32"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

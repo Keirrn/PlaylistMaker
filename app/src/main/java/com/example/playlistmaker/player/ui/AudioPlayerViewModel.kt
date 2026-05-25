@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.domain.FavoritesInteractor
+import com.example.playlistmaker.media.domain.Playlist
+import com.example.playlistmaker.media.domain.PlaylistInteractor
 import com.example.playlistmaker.player.domain.FormatMillisUseCase
 import com.example.playlistmaker.search.domain.Track
 import kotlinx.coroutines.Job
@@ -17,7 +19,8 @@ class AudioPlayerViewModel(
     private val track: Track,
     private val formatTimeUseCase: FormatMillisUseCase,
     private val mediaPlayer: MediaPlayer,
-    private val favoritesInteractor: FavoritesInteractor
+    private val favoritesInteractor: FavoritesInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
@@ -29,7 +32,14 @@ class AudioPlayerViewModel(
     private var timerJob: Job? = null
     fun observeProgressTime(): LiveData<String> = progressTimeLiveData
 
+    private val playlistsLiveData = MutableLiveData<List<Playlist>>()
 
+    fun observePlaylists(): LiveData<List<Playlist>> = playlistsLiveData
+    private val playlistMessageLiveData = MutableLiveData<String>()
+
+    fun observePlaylistMessage(): LiveData<String> {
+        return playlistMessageLiveData
+    }
 
     init {
         preparePlayer()
@@ -114,6 +124,42 @@ class AudioPlayerViewModel(
     private fun resetTimer() {
         mediaPlayer.stop()
         progressTimeLiveData.postValue(START_VALUE)
+    }
+    fun loadPlaylists() {
+
+        viewModelScope.launch {
+
+            playlistInteractor
+                .getAllPlaylists()
+                .collect {
+
+                    playlistsLiveData.postValue(it)
+                }
+        }
+    }
+    fun onPlaylistClicked(playlist: Playlist) {
+        if (playlist.trackIds.contains(track.trackId)) {
+
+            playlistMessageLiveData.postValue(
+                "Трек уже добавлен в плейлист ${playlist.playlistName}"
+            )
+
+            return
+        }
+        viewModelScope.launch {
+
+            val result = playlistInteractor.addTrackToPlaylist(
+                track,
+                playlist
+            )
+
+            if (result) {
+
+                playlistMessageLiveData.postValue(
+                    "Добавлено в плейлист ${playlist.playlistName}"
+                )
+            }
+        }
     }
 
     companion object {

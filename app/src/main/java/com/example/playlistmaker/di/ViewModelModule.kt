@@ -8,6 +8,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import android.os.Handler
 import android.os.Looper
 import com.example.playlistmaker.media.ui.FavoritesViewModel
+import com.example.playlistmaker.media.ui.PlaylistCreatorViewModel
 import com.example.playlistmaker.media.ui.PlaylistsViewModel
 import com.example.playlistmaker.search.domain.Track
 import org.koin.dsl.module
@@ -26,10 +27,12 @@ val viewModelModule = module{
             FavoritesViewModel(get  (),get())
     }
     viewModel {
-            PlaylistsViewModel()
+        PlaylistsViewModel(get())
     }
-
+    viewModel{
+        PlaylistCreatorViewModel(get(), get() )
+    }
     viewModel { (track: Track) ->
-        AudioPlayerViewModel( track, get(),get(),get())
+        AudioPlayerViewModel( track, get(),get(),get(),get() )
     }
 }
