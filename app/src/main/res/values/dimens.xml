@@ -32,5 +32,6 @@
     <dimen name="padding_settings_item">20dp</dimen>
     <dimen name="margin_32">32dp</dimen>
     <dimen name="image_312dp">312dp</dimen>
+    <dimen name="image_small">120dp</dimen>
     <dimen name="image_medium">160dp</dimen>
 </resources>

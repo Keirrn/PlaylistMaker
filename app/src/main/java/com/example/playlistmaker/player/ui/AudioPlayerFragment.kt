@@ -146,16 +146,16 @@ class AudioPlayerFragment : Fragment() {
                 }
             }
         )
+        viewModel.observePlaylists().observe(viewLifecycleOwner) {
+
+            adapter.updateData(it)
+        }
         binding.playlistBtn.setOnClickListener {
 
             viewModel.loadPlaylists()
 
             bottomSheetBehavior.state =
-                BottomSheetBehavior.STATE_COLLAPSED
-        }
-        viewModel.observePlaylists().observe(viewLifecycleOwner) {
-
-            adapter.updateData(it)
+                BottomSheetBehavior.STATE_EXPANDED
         }
         binding.newPlaylistBottomButton.setOnClickListener {
 
