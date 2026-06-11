@@ -178,7 +178,11 @@ class AudioPlayerFragment : Fragment() {
         super.onPause()
         viewModel.onPause()
     }
+    override fun onResume() {
+        super.onResume()
 
+        viewModel.loadPlaylists()
+    }
     private fun updatePlayButtonState(state: Int) {
         when (state) {
             AudioPlayerViewModel.STATE_DEFAULT -> {

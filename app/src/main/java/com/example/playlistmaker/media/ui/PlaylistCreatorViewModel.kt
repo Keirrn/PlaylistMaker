@@ -25,7 +25,48 @@ class PlaylistCreatorViewModel(
 
     private var currentName: String = ""
     private var currentDescription: String? = null
+    private var editingPlaylistId: Long? = null
+    private var oldTrackIds: List<Long> = emptyList()
+    private var oldTracksCount = 0
+    private val _editablePlaylist = MutableLiveData<Playlist>()
+    val editablePlaylist: LiveData<Playlist> = _editablePlaylist
+    fun loadPlaylist(playlist: Playlist) {
 
+        editingPlaylistId = playlist.playlistId
+
+        oldTrackIds = playlist.trackIds
+        oldTracksCount = playlist.tracksCount
+
+        currentName = playlist.playlistName
+        currentDescription = playlist.playlistDescription
+
+        _coverPath.value = playlist.coverPath
+
+        _buttonEnabled.value = currentName.isNotBlank()
+    }
+    fun loadPlaylistForEdit(id: Long) {
+
+        viewModelScope.launch {
+
+            val playlist =
+                playlistInteractor.getPlaylistById(id)
+
+            editingPlaylistId = playlist.playlistId
+
+            oldTrackIds = playlist.trackIds
+            oldTracksCount = playlist.tracksCount
+
+            currentName = playlist.playlistName
+            currentDescription = playlist.playlistDescription
+
+            _coverPath.postValue(playlist.coverPath)
+            _editablePlaylist.postValue(playlist)
+
+            _buttonEnabled.postValue(
+                playlist.playlistName.isNotBlank()
+            )
+        }
+    }
     fun onNameChanged(name: String) {
         currentName = name
         _buttonEnabled.value = name.isNotBlank()
@@ -50,24 +91,31 @@ class PlaylistCreatorViewModel(
         return currentName
     }
 
-    fun createPlaylist(onComplete: () -> Unit) {
+    fun savePlaylist(onComplete: () -> Unit) {
 
         viewModelScope.launch {
 
             val savedImagePath = selectedImageUri?.let {
                 imageInteractor.saveImage(it)
-            }
+            } ?: _coverPath.value
 
             val playlist = Playlist(
-                playlistId = 0,
+                playlistId = editingPlaylistId ?: 0,
                 playlistName = currentName,
                 playlistDescription = currentDescription,
                 coverPath = savedImagePath,
-                trackIds = emptyList(),
-                tracksCount = 0
+                trackIds = oldTrackIds,
+                tracksCount = oldTracksCount
             )
 
-            playlistInteractor.addPlaylist(playlist)
+            if (editingPlaylistId == null) {
+
+                playlistInteractor.addPlaylist(playlist)
+
+            } else {
+
+                playlistInteractor.updatePlaylist(playlist)
+            }
 
             onComplete()
         }

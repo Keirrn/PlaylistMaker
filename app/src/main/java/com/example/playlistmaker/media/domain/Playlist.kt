@@ -1,7 +1,7 @@
 package com.example.playlistmaker.media.domain
 
 data class Playlist(
-    val playlistId: Int,
+    val playlistId: Long,
     val playlistName: String,
     val playlistDescription: String?,
     val coverPath: String?,

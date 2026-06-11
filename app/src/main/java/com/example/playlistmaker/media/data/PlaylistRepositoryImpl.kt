@@ -49,4 +49,58 @@ class PlaylistRepositoryImpl(
 
         return true
     }
+    override suspend fun getPlaylistById(id: Long): Playlist {
+
+        return playlistDbConvertor.map(
+            playlistDao.getPlaylistById(id)
+        )
+    }
+    override suspend fun getTracksByIds(ids: List<Long>): List<Track> {
+
+        return playlistTrackDao.getTracks()
+            .filter { ids.contains(it.trackId) }
+            .map { playlistDbConvertor.map(it) }
+    }
+    override suspend fun deleteTrackFromPlaylist(trackId: Long , playlistId: Long) {
+        val playlist = getPlaylistById(playlistId)
+
+        val updatedIds = playlist.trackIds
+            .filter { it != trackId }
+
+        val updatedPlaylist = playlist.copy(
+            trackIds = updatedIds,
+            tracksCount = updatedIds.size
+        )
+
+        playlistDao.updatePlaylist(
+            playlistDbConvertor.map(updatedPlaylist)
+        )
+        deleteTrackIfUnused(trackId)
+    }
+    override suspend fun deletePlaylist(playlist: Playlist) {
+        val trackIds = playlist.trackIds
+
+        playlistDao.deletePlaylist(
+            playlist.playlistId
+        )
+
+        trackIds.forEach { trackId ->
+            deleteTrackIfUnused(trackId)
+        }
+    }
+    private suspend fun deleteTrackIfUnused(trackId: Long) {
+
+        val playlists = playlistDao.getPlaylists()
+
+        val isUsedInOtherPlaylist = playlists.any { playlistEntity ->
+
+            val playlist = playlistDbConvertor.map(playlistEntity)
+
+            playlist.trackIds.contains(trackId)
+        }
+
+        if (!isUsedInOtherPlaylist) {
+            playlistTrackDao.deleteTrack(trackId)
+        }
+    }
 }

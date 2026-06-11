@@ -1,10 +1,10 @@
 [versions]
 activityKtx = "1.6.1"
-agp = "8.13.2"
+agp = "9.1.1"
 fragmentKtx = "1.5.6"
 glide = "4.14.2"
 koinAndroid = "3.3.0"
-kotlin = "2.2.0"
+kotlin = "2.2.10"
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
