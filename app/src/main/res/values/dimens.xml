@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="text_primary">22sp</dimen>
+    <dimen name="text_label">24sp</dimen>
+    <dimen name="text_playlist">18sp</dimen>
     <dimen name="text_small">16sp</dimen>
     <dimen name="text_micro">11sp</dimen>
     <dimen name="text_mini">12sp</dimen>
@@ -14,6 +16,7 @@
     <dimen name="margin_8">8dp</dimen>
     <dimen name="margin_icon_padding">10dp</dimen>
     <dimen name="margin_between_buttons">12dp</dimen>
+    <dimen name="margin_playlist_buttons">19dp</dimen>
     <dimen name="margin_14">14dp</dimen>
     <dimen name="margin_settings_top">45dp</dimen>
     <dimen name="margin_fragment_top">46dp</dimen>

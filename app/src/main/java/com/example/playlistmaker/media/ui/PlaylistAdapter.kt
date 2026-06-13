@@ -9,7 +9,8 @@ import com.example.playlistmaker.media.domain.Playlist
 import com.example.playlistmaker.player.domain.ImageLoadRepository
 
 class PlaylistAdapter(
-    private val imageLoader: ImageLoadRepository
+    private val imageLoader: ImageLoadRepository,
+    private val onClick: (Playlist) -> Unit
 ) : RecyclerView.Adapter<PlaylistViewHolder>() {
 
     private val playlists = mutableListOf<Playlist>()
@@ -33,6 +34,9 @@ class PlaylistAdapter(
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
         holder.bind(playlists[position], imageLoader)
+        holder.itemView.setOnClickListener {
+            onClick(playlists[position])
+        }
     }
 
     override fun getItemCount(): Int {

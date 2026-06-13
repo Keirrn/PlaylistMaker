@@ -1,15 +1,12 @@
 package com.example.playlistmaker.media.ui
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toUri
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -29,10 +26,12 @@ class PlaylistCreatorFragment : Fragment() {
     private var _binding: FragmentPlaylistCreatorBinding? = null
     private val binding get() = _binding!!
 
+    private var editPlaylistId: Long = -1L
+
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-                viewModel.onImageSelected(uri)
+            uri?.let {
+                viewModel.onImageSelected(it)
             }
         }
 
@@ -45,8 +44,14 @@ class PlaylistCreatorFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?
+    ) {
         super.onViewCreated(view, savedInstanceState)
+
+        editPlaylistId =
+            arguments?.getLong("playlistId", -1L) ?: -1L
 
         setupBackPressed()
 
@@ -56,7 +61,9 @@ class PlaylistCreatorFragment : Fragment() {
 
         binding.pickerImage.setOnClickListener {
             pickMedia.launch(
-                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                PickVisualMediaRequest(
+                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                )
             )
         }
 
@@ -73,23 +80,46 @@ class PlaylistCreatorFragment : Fragment() {
         }
 
         viewModel.coverPath.observe(viewLifecycleOwner) { path ->
-            if (path != null) {
+            path?.let {
                 imageLoader.loadImage(
-                    path,
+                    it,
                     binding.pickerImage,
                     8f
                 )
             }
         }
 
+        viewModel.editablePlaylist.observe(viewLifecycleOwner) { playlist ->
+
+            binding.playlistNameEditText.setText(
+                playlist.playlistName
+            )
+
+            binding.descriptionEditText.setText(
+                playlist.playlistDescription
+            )
+        }
+
+        if (editPlaylistId != -1L) {
+
+            binding.backbar.title = "Редактировать"
+
+            binding.createButton.text = "Сохранить"
+
+            viewModel.loadPlaylistForEdit(editPlaylistId)
+        }
+
         binding.createButton.setOnClickListener {
 
-            viewModel.createPlaylist {
+            viewModel.savePlaylist {
 
-                ToastUtils.showPlaylistToast(
-                    requireContext(),
-                    "Плейлист ${viewModel.getPlaylistName()} создан"
-                )
+                if (editPlaylistId == -1L) {
+
+                    ToastUtils.showPlaylistToast(
+                        requireContext(),
+                        "Плейлист ${viewModel.getPlaylistName()} создан"
+                    )
+                }
 
                 findNavController().navigateUp()
             }
@@ -111,6 +141,11 @@ class PlaylistCreatorFragment : Fragment() {
 
     private fun closeScreen() {
 
+        if (editPlaylistId != -1L) {
+            findNavController().navigateUp()
+            return
+        }
+
         if (viewModel.hasUnsavedData()) {
 
             MaterialAlertDialogBuilder(requireContext())
@@ -123,6 +158,7 @@ class PlaylistCreatorFragment : Fragment() {
                 .show()
 
         } else {
+
             findNavController().navigateUp()
         }
     }

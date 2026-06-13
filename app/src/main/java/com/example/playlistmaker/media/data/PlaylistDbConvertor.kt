@@ -36,6 +36,7 @@ class PlaylistDbConvertor {
             track.trackName,
             track.artistName,
             track.trackTime,
+            track.trackTimeMillis,
             track.artworkUrl100,
             track.collectionName,
             track.releaseDate,
@@ -43,6 +44,21 @@ class PlaylistDbConvertor {
             track.country,
             track.previewUrl,
             System.currentTimeMillis()
+        )
+    }
+    fun map(trackEntity: PlaylistTrackEntity): Track {
+        return Track(
+            trackEntity.trackName,
+            trackEntity.artistName,
+            trackEntity.trackTime,
+            trackEntity.trackTimeMillis,
+            trackEntity.artworkUrl100,
+            trackEntity.trackId,
+            trackEntity.collectionName,
+            trackEntity.releaseDate,
+            trackEntity.primaryGenreName,
+            trackEntity.country,
+            trackEntity.previewUrl
         )
     }
 }
