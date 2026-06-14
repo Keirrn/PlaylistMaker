@@ -15,7 +15,6 @@ import com.example.playlistmaker.search.domain.Track
 import org.koin.dsl.module
 
 val viewModelModule = module{
-    factory { MediaPlayer() }
 
     single { Handler(Looper.getMainLooper()) }
     viewModel{
@@ -34,7 +33,7 @@ val viewModelModule = module{
         PlaylistCreatorViewModel(get(), get() )
     }
     viewModel { (track: Track) ->
-        AudioPlayerViewModel( track, get(),get(),get(),get() )
+        AudioPlayerViewModel(track, get(), get(), get())
     }
     viewModel {
         PlaylistInfoViewModel(get())

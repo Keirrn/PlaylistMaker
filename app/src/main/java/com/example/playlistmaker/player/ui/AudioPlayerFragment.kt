@@ -1,5 +1,7 @@
 package com.example.playlistmaker.player.ui
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -39,6 +42,72 @@ class AudioPlayerFragment : Fragment() {
 
     private val track: Track by lazy {
         requireArguments().getParcelable<Track>(ARGS_TRACK)!!
+    }
+    private var mService: MusicService? = null
+    private var mBound: Boolean = false
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            bindMusicService()
+        } else {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                showPermissionRationaleDialog()
+            } else {
+                showSettingsDialog()
+            }
+        }
+    }
+
+    private fun showPermissionRationaleDialog() {
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Уведомления плеера")
+            .setMessage("Разрешение нужно для того, чтобы вы могли управлять музыкой через шторку уведомлений, когда приложение свернуто.")
+            .setPositiveButton("Разрешить") { _, _ ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+            .setNegativeButton("Продолжить без шторки") { _, _ ->
+                bindMusicService()
+            }
+            .show()
+    }
+
+    private fun showSettingsDialog() {
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Доступ к уведомлениям ограничен")
+            .setMessage("Вы запретили уведомления. Чтобы плеер работал в фоновом режиме, пожалуйста, включите их вручную в настройках приложения.")
+            .setPositiveButton("В настройки") { _, _ ->
+                openAppSettings()
+                bindMusicService()
+            }
+            .setNegativeButton("Отмена") { _, _ ->
+                bindMusicService()
+            }
+            .show()
+    }
+
+    private fun openAppSettings() {
+        val intent = android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+            data = android.net.Uri.fromParts("package", requireContext().packageName, null)
+        }
+        requireContext().startActivity(intent)
+    }
+    private val connection = object : android.content.ServiceConnection {
+        override fun onServiceConnected(className: android.content.ComponentName, service: android.os.IBinder) {
+            val binder = service as MusicService.MusicBinder
+            mService = binder.getService()
+            mBound = true
+            mService?.let { viewModel.onServiceConnected(it) }
+        }
+
+        override fun onServiceDisconnected(arg0: android.content.ComponentName) {
+            mBound = false
+            mService = null
+            viewModel.onServiceDisconnected()
+        }
     }
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -172,41 +241,58 @@ class AudioPlayerFragment : Fragment() {
             bottomSheetBehavior.state =
                 BottomSheetBehavior.STATE_HIDDEN
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            bindMusicService()
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        viewModel.onPause()
+        viewModel.onAppInBackground()
     }
     override fun onResume() {
         super.onResume()
 
         viewModel.loadPlaylists()
+        viewModel.onAppInForeground()
     }
     private fun updatePlayButtonState(state: Int) {
         when (state) {
-            AudioPlayerViewModel.STATE_DEFAULT -> {
+            MusicService.STATE_DEFAULT -> {
                 binding.playBtn.isEnabled = false
                 binding.playBtn.setPlayingState(false)
             }
 
-            AudioPlayerViewModel.STATE_PREPARED -> {
+            MusicService.STATE_PREPARED -> {
                 binding.playBtn.isEnabled = true
                 binding.playBtn.setPlayingState(false)
             }
 
-            AudioPlayerViewModel.STATE_PLAYING -> {
+            MusicService.STATE_PLAYING -> {
                 binding.playBtn.isEnabled = true
                 binding.playBtn.setPlayingState(true)
             }
 
-            AudioPlayerViewModel.STATE_PAUSED -> {
+            MusicService.STATE_PAUSED -> {
                 binding.playBtn.isEnabled = true
                 binding.playBtn.setPlayingState(false)
             }
         }
     }
+    private fun bindMusicService() {
+        val intent = android.content.Intent(requireContext(), MusicService::class.java).apply {
+            putExtra(ARGS_TRACK, track)
+        }
+        requireContext().bindService(intent, connection, android.content.Context.BIND_AUTO_CREATE)
+    }
 
-
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (mBound) {
+            requireContext().unbindService(connection)
+            mBound = false
+        }
+    }
 }
