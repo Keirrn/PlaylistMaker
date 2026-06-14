@@ -40,6 +40,23 @@ class AudioPlayerFragment : Fragment() {
     private val track: Track by lazy {
         requireArguments().getParcelable<Track>(ARGS_TRACK)!!
     }
+    private var mService: MusicService? = null
+    private var mBound: Boolean = false
+
+    private val connection = object : android.content.ServiceConnection {
+        override fun onServiceConnected(className: android.content.ComponentName, service: android.os.IBinder) {
+            val binder = service as MusicService.MusicBinder
+            mService = binder.getService()
+            mBound = true
+            mService?.let { viewModel.onServiceConnected(it) }
+        }
+
+        override fun onServiceDisconnected(arg0: android.content.ComponentName) {
+            mBound = false
+            mService = null
+            viewModel.onServiceDisconnected()
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -172,35 +189,40 @@ class AudioPlayerFragment : Fragment() {
             bottomSheetBehavior.state =
                 BottomSheetBehavior.STATE_HIDDEN
         }
+        val intent = android.content.Intent(requireContext(), MusicService::class.java).apply {
+            putExtra(ARGS_TRACK, track)
+        }
+        requireActivity().bindService(intent, connection, android.content.Context.BIND_AUTO_CREATE)
     }
 
     override fun onPause() {
         super.onPause()
-        viewModel.onPause()
+        viewModel.onAppInBackground()
     }
     override fun onResume() {
         super.onResume()
 
         viewModel.loadPlaylists()
+        viewModel.onAppInForeground()
     }
     private fun updatePlayButtonState(state: Int) {
         when (state) {
-            AudioPlayerViewModel.STATE_DEFAULT -> {
+            MusicService.STATE_DEFAULT -> {
                 binding.playBtn.isEnabled = false
                 binding.playBtn.setPlayingState(false)
             }
 
-            AudioPlayerViewModel.STATE_PREPARED -> {
+            MusicService.STATE_PREPARED -> {
                 binding.playBtn.isEnabled = true
                 binding.playBtn.setPlayingState(false)
             }
 
-            AudioPlayerViewModel.STATE_PLAYING -> {
+            MusicService.STATE_PLAYING -> {
                 binding.playBtn.isEnabled = true
                 binding.playBtn.setPlayingState(true)
             }
 
-            AudioPlayerViewModel.STATE_PAUSED -> {
+            MusicService.STATE_PAUSED -> {
                 binding.playBtn.isEnabled = true
                 binding.playBtn.setPlayingState(false)
             }
@@ -208,5 +230,11 @@ class AudioPlayerFragment : Fragment() {
     }
 
 
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (mBound) {
+            requireActivity().unbindService(connection)
+            mBound = false
+        }
+    }
 }
