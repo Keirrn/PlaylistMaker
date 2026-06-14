@@ -187,25 +187,26 @@ class AudioPlayerFragment : Fragment() {
         when (state) {
             AudioPlayerViewModel.STATE_DEFAULT -> {
                 binding.playBtn.isEnabled = false
-                binding.playBtn.setImageResource(com.example.playlistmaker.R.drawable.play_song_ic)
+                binding.playBtn.setPlayingState(false)
             }
 
             AudioPlayerViewModel.STATE_PREPARED -> {
                 binding.playBtn.isEnabled = true
-                binding.playBtn.setImageResource(com.example.playlistmaker.R.drawable.play_song_ic)
+                binding.playBtn.setPlayingState(false)
             }
 
             AudioPlayerViewModel.STATE_PLAYING -> {
                 binding.playBtn.isEnabled = true
-                binding.playBtn.setImageResource(com.example.playlistmaker.R.drawable.stop_song_ic)
+                binding.playBtn.setPlayingState(true)
             }
 
             AudioPlayerViewModel.STATE_PAUSED -> {
                 binding.playBtn.isEnabled = true
-                binding.playBtn.setImageResource(com.example.playlistmaker.R.drawable.play_song_ic)
+                binding.playBtn.setPlayingState(false)
             }
         }
     }
+
 
 
 }
