@@ -5,7 +5,7 @@ import com.example.playlistmaker.media.data.db.dao.TrackDao
 import com.example.playlistmaker.media.domain.FavoriteTracksRepository
 import com.example.playlistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 class FavoriteTracksRepositoryImpl(
     private val trackDao: TrackDao,
@@ -15,10 +15,12 @@ class FavoriteTracksRepositoryImpl(
         trackDao.insertTrack(trackDbConvertor.map(track))
     }
 
-    override fun getFavorites(): Flow<List<Track>> = flow {
-        val track = trackDao.getTracks()
-        emit(convertFromTrackEntity(track))
+    override fun getFavorites(): Flow<List<Track>> {
+        return trackDao.getTracks().map { entities ->
+            convertFromTrackEntity(entities)
+        }
     }
+
 
     private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {
         return tracks.map { track -> trackDbConvertor.map(track) }

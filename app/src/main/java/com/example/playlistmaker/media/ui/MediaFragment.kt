@@ -4,43 +4,92 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.ComposeView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import com.example.playlistmaker.databinding.FragmentMediaBinding
-import com.google.android.material.tabs.TabLayoutMediator
+import androidx.navigation.fragment.findNavController
+import com.example.playlistmaker.R
+import com.example.playlistmaker.player.domain.ImageLoadRepository
+import com.example.playlistmaker.player.ui.AudioPlayerFragment
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MediaFragment : Fragment() {
-    private lateinit var binding: FragmentMediaBinding
 
-    private lateinit var tabMediator: TabLayoutMediator
+    private val favoritesViewModel: FavoritesViewModel by viewModel()
+    private val playlistsViewModel: PlaylistsViewModel by viewModel()
 
+    private val imageLoader: ImageLoadRepository by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMediaBinding.inflate(layoutInflater, container, false)
-        return binding.root
+
+        return ComposeView(requireContext()).apply {
+
+            setContent {
+
+                val favoritesState by favoritesViewModel
+                    .observeState()
+                    .observeAsState(FavoritesState.Empty)
+
+                val playlists by playlistsViewModel
+                    .playlists
+                    .observeAsState(emptyList())
+
+                MediaScreen(
+                    favoritesState = favoritesState,
+                    playlists = playlists,
+                    imageLoader = imageLoader,
+
+                    onTrackClick = {
+                        favoritesViewModel.onTrackClicked(it)
+                    },
+
+                    onPlaylistClick = {
+                        findNavController().navigate(
+                            R.id.action_mediaFragment_to_playlistInfoFragment,
+                            bundleOf(
+                                "playlistId" to it.playlistId
+                            )
+                        )
+                    },
+
+                    onCreatePlaylistClick = {
+                        playlistsViewModel.onNewPlaylistClicked()
+                    }
+                )
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.viewPager.adapter =
-            MediaViewPagerAdapter(childFragmentManager, lifecycle)
+        super.onViewCreated(view, savedInstanceState)
 
-        tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            when (position) {
-                0 -> tab.text = getString(com.example.playlistmaker.R.string.favorites_track)
-                1 -> tab.text = getString(com.example.playlistmaker.R.string.Playlists)
-            }
+        playlistsViewModel.loadPlaylists()
+
+        favoritesViewModel.openPlayerEvent.observe(viewLifecycleOwner) {
+
+            findNavController().navigate(
+                R.id.action_mediaFragment_to_audioPlayerFragment,
+                AudioPlayerFragment.createArgs(it)
+            )
         }
-        tabMediator.attach()
+
+        playlistsViewModel.navigateToPlaylistCreator.observe(viewLifecycleOwner) {
+
+            findNavController().navigate(
+                R.id.action_mediaFragment_to_playlistCreatorFragment
+            )
+        }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        tabMediator.detach()
+    override fun onResume() {
+        super.onResume()
+        playlistsViewModel.loadPlaylists()
     }
 }
-
-
-

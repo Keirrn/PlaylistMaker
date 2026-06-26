@@ -1,22 +1,22 @@
 package com.example.playlistmaker.search.ui
 
-import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.player.domain.ImageLoadRepository
 import com.example.playlistmaker.search.domain.HistoryManagerRepository
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.domain.TrackInteractor
 import com.example.playlistmaker.utill.SingleLiveEvent
 import com.example.playlistmaker.utill.debounce
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val trackInteractor: TrackInteractor,
     private val historyRepository: HistoryManagerRepository,
-    private val imageLoader: ImageLoadRepository
 ) : ViewModel() {
 
     companion object {
@@ -24,11 +24,11 @@ class SearchViewModel(
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
-    fun loadImage(url: String, imageView: ImageView) {
-        imageLoader.loadImage(url, imageView, 8f)
-    }
 
-    private var currentQuery = ""
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
     private val _searchState = MutableLiveData<SearchState>(SearchState.Empty)
     val searchState: LiveData<SearchState> = _searchState
 
@@ -37,8 +37,10 @@ class SearchViewModel(
 
     private val _clearButtonVisible = MutableLiveData<Boolean>(false)
     val clearButtonVisible: LiveData<Boolean> = _clearButtonVisible
+
     private val _openPlayerEvent = SingleLiveEvent<Track>()
     val openPlayerEvent: LiveData<Track> = _openPlayerEvent
+
     private val clickDebounce = debounce<Track>(
         delayMillis = CLICK_DEBOUNCE_DELAY,
         coroutineScope = viewModelScope,
@@ -47,6 +49,7 @@ class SearchViewModel(
         historyRepository.addTrackToHistory(track)
         _openPlayerEvent.postValue(track)
     }
+
     private val searchDebounce = debounce<String>(
         delayMillis = SEARCH_DEBOUNCE_DELAY,
         coroutineScope = viewModelScope,
@@ -60,7 +63,7 @@ class SearchViewModel(
     }
 
     fun onTextChanged(text: String) {
-        currentQuery = text
+        _searchQuery.value = text
         _clearButtonVisible.postValue(text.isNotEmpty())
 
         if (text.isEmpty()) {
@@ -72,12 +75,11 @@ class SearchViewModel(
     }
 
     fun clearSearch() {
-        currentQuery = ""
+        _searchQuery.value = ""
         _clearButtonVisible.postValue(false)
         showHistory()
         _searchState.postValue(SearchState.Empty)
     }
-
 
     private fun searchTracks(query: String) {
         if (query.isEmpty()) return
@@ -104,8 +106,8 @@ class SearchViewModel(
         }
     }
 
-
     fun refreshSearch() {
+        val currentQuery = _searchQuery.value
         if (currentQuery.isNotEmpty()) {
             searchTracks(currentQuery)
         }
@@ -114,7 +116,7 @@ class SearchViewModel(
     fun clearHistory() {
         historyRepository.clearHistory()
         _historyState.postValue(emptyList())
-        if (currentQuery.isEmpty()) {
+        if (_searchQuery.value.isEmpty()) {
             _searchState.postValue(SearchState.Empty)
         }
     }
@@ -122,7 +124,7 @@ class SearchViewModel(
     private fun showHistory() {
         val history = historyRepository.getHistory()
         _historyState.postValue(history)
-        if (currentQuery.isEmpty() && history.isNotEmpty()) {
+        if (_searchQuery.value.isEmpty() && history.isNotEmpty()) {
             _searchState.postValue(SearchState.History(history))
         }
     }
@@ -130,6 +132,4 @@ class SearchViewModel(
     init {
         showHistory()
     }
-
-
 }
