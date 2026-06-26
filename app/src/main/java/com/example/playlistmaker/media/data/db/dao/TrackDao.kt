@@ -6,17 +6,19 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.playlistmaker.media.data.db.TrackEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TrackDao {
-    @Insert(entity = TrackEntity::class, onConflict = OnConflictStrategy.REPLACE)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTrack(track: TrackEntity)
 
-    @Delete(entity = TrackEntity::class)
+    @Delete
     suspend fun deleteTrack(track: TrackEntity)
 
-    @Query("SELECT * FROM track_table ORDER BY addedAt")
-    suspend fun getTracks(): List<TrackEntity>
+    @Query("SELECT * FROM track_table ORDER BY addedAt DESC")
+    fun getTracks(): Flow<List<TrackEntity>>
 
     @Query("SELECT trackId FROM track_table")
     suspend fun getTracksId(): List<Long>

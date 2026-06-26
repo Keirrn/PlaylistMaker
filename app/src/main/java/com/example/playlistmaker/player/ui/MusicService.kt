@@ -6,12 +6,12 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
-import android.os.Build
-import androidx.core.app.NotificationCompat
-import androidx.core.app.ServiceCompat
 import android.media.MediaPlayer
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
+import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
 import com.example.playlistmaker.search.domain.Track
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -63,16 +63,6 @@ class MusicService : Service(), PlayerServiceInteractor {
         return binder
     }
 
-    override fun onUnbind(intent: Intent?): Boolean {
-        mediaPlayer?.stop()
-        mediaPlayer?.release()
-        mediaPlayer = null
-        timerJob?.cancel()
-
-        return super.onUnbind(intent)
-    }
-
-
 
     override fun play() {
         startPlayer()
@@ -85,7 +75,8 @@ class MusicService : Service(), PlayerServiceInteractor {
     override fun showNotification() {
 
 
-        val trackInfo = "${currentTrack?.artistName ?: "Неизвестный исполнитель"} - ${currentTrack?.trackName ?: "Неизвестный трек"}"
+        val trackInfo =
+            "${currentTrack?.artistName ?: "Неизвестный исполнитель"} - ${currentTrack?.trackName ?: "Неизвестный трек"}"
 
         val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setContentTitle("Playlist Maker")
@@ -120,7 +111,8 @@ class MusicService : Service(), PlayerServiceInteractor {
                 description = "Канал для отображения играющего трека в Playlist Maker"
             }
 
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager =
+                getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }
@@ -169,11 +161,37 @@ class MusicService : Service(), PlayerServiceInteractor {
         }
     }
 
+    override fun onUnbind(intent: Intent?): Boolean {
+        timerJob?.cancel()
+
+        val playerToRelease = mediaPlayer
+        mediaPlayer = null
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                playerToRelease?.stop()
+                playerToRelease?.release()
+            } catch (e: Exception) {
+
+            }
+        }
+
+        return super.onUnbind(intent)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         timerJob?.cancel()
-        mediaPlayer?.release()
+
+        val playerToRelease = mediaPlayer
         mediaPlayer = null
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                playerToRelease?.release()
+            } catch (e: Exception) {
+            }
+        }
     }
 
     companion object {
